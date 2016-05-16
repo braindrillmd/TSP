@@ -4,6 +4,7 @@ using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
+using System.Drawing.Drawing2D;
 
 public static class Randomizer
 {
@@ -171,14 +172,14 @@ public class WUGraph
     public WUGraph()
     {
         vertices = new List<WUGraphVertice>();
-        edges    = new List<WUGraphEdge>();
+        edges = new List<WUGraphEdge>();
     }
 
     public WUGraphEdge FindEdge(int edgeIndex1, int edgeIndex2)
     {
         for (int i = 0; i < edges.Count; i++)
         {
-            if(edges.ElementAt(i).GetVertice1Index() == edgeIndex1 && edges.ElementAt(i).GetVertice2Index() == edgeIndex2)
+            if (edges.ElementAt(i).GetVertice1Index() == edgeIndex1 && edges.ElementAt(i).GetVertice2Index() == edgeIndex2)
             {
                 return edges.ElementAt(i);
             }
@@ -212,16 +213,26 @@ public class WUGraph
 
     public void Draw(Graphics canvas)
     {
+
         canvas.Clear(SystemColors.Control);
+
+        int x1 = 0;
+        int x2 = 0;
+        int y1 = 0;
+        int y2 = 0;
+
         for (int i = 0; i < edges.Count; i++)
         {
-            int x1 = vertices.ElementAt(edges.ElementAt(i).GetVertice1Index()).GetX();
-            int y1 = vertices.ElementAt(edges.ElementAt(i).GetVertice1Index()).GetY();
-            int x2 = vertices.ElementAt(edges.ElementAt(i).GetVertice2Index()).GetX();
-            int y2 = vertices.ElementAt(edges.ElementAt(i).GetVertice2Index()).GetY();
+            x1 = vertices.ElementAt(edges.ElementAt(i).GetVertice1Index()).GetX();
+            y1 = vertices.ElementAt(edges.ElementAt(i).GetVertice1Index()).GetY();
+            x2 = vertices.ElementAt(edges.ElementAt(i).GetVertice2Index()).GetX();
+            y2 = vertices.ElementAt(edges.ElementAt(i).GetVertice2Index()).GetY();
 
             canvas.DrawLine(Pens.Black, new Point(x1, y1), new Point(x2, y2));
         }
+
+
+
 
         for (int i = 0; i < vertices.Count; i++)
         {
@@ -234,14 +245,50 @@ public class WUGraph
 
     public void Draw(Bitmap bitmapCanvas, PictureBox output)
     {
-        //canvas.Clear(SystemColors.Control);
         Graphics canvas = Graphics.FromImage(bitmapCanvas);
         Draw(canvas);
         output.Image = bitmapCanvas;
     }
 
+    /*private void _drawArrowhead(int x0, int y0, int x, int y, Graphics canvas)
+    {
+        double angle = 0.25;
+        int length = 15;
+        double lineAngle = Math.Atan2(y - y0, x - x0);
+        double precision = 0.02;
+
+        double k1 = Math.Tan(Math.Atan2(y - y0, x - x0) + angle);
+        double k2 = Math.Tan(Math.Atan2(y - y0, x - x0) - angle);
+
+        int xA11 = (int)(x - length / (Math.Sqrt(1 + k1 * k1)));
+        int xA12 = (int)(x + length / (Math.Sqrt(1 + k1 * k1)));
+        int xA21 = (int)(x - length / (Math.Sqrt(1 + k2 * k2)));
+        int xA22 = (int)(x + length / (Math.Sqrt(1 + k2 * k2)));
+
+        int yA11 = (int)(y + k1 * (xA11 - x));
+        int yA12 = (int)(y + k1 * (xA12 - x));
+        int yA21 = (int)(y + k2 * (xA21 - x));
+        int yA22 = (int)(y + k2 * (xA22 - x));
+
+        double d11 = ((y - y0) * xA11 + (x - x0) * yA11 + (x0 * y - x * y0)) / (Math.Sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0)));
+        double d12 = ((y - y0) * xA12 + (x - x0) * yA12 + (x0 * y - x * y0)) / (Math.Sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0)));
+        double d21 = ((y - y0) * xA21 + (x - x0) * yA21 + (x0 * y - x * y0)) / (Math.Sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0)));
+        double d22 = ((y - y0) * xA22 + (x - x0) * yA22 + (x0 * y - x * y0)) / (Math.Sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0)));
+
+        double k11 = Math.Atan2(yA11 - y, xA11 - x);
+        double k12 = Math.Atan2(yA12 - y, xA12 - x);
+        double k21 = Math.Atan2(yA21 - y, xA21 - x);
+        double k22 = Math.Atan2(yA22 - y, xA22 - x);
+
+        canvas.DrawLine(Pens.Blue, x, y, xA11, yA11);
+        canvas.DrawLine(Pens.Blue, x, y, xA12, yA12);
+        canvas.DrawLine(Pens.Blue, x, y, xA21, yA21);
+        canvas.DrawLine(Pens.Blue, x, y, xA22, yA22);
+    }*/
+
     public int DrawPath(WUGraphPath path, Graphics canvas)
     {
+        
         int x1 = 0;
         int y1 = 0;
         int x2 = 0;
@@ -249,22 +296,39 @@ public class WUGraph
         int pathWeight = 0;
         int i = 0;
 
+        int penWidth = 2;
+        double arrowCapWidth = 4.5;
+        AdjustableArrowCap cap = new AdjustableArrowCap((float)arrowCapWidth, (float)arrowCapWidth);
+        Pen pen = new Pen(Color.Red, penWidth);
+        pen.CustomEndCap = cap;
+
+        canvas.Clear(SystemColors.Control);
+
         int x = vertices.ElementAt(path.GetPath()[0]).GetX();
         int y = vertices.ElementAt(path.GetPath()[0]).GetY();
         canvas.FillEllipse(Brushes.Blue, x - 5, y - 5, 10, 10);
 
         for (i = 0; i < path.GetLength() - 1; i++)
         {
+            
+
             x1 = vertices.ElementAt(path.GetPath()[i]).GetX();
             y1 = vertices.ElementAt(path.GetPath()[i]).GetY();
             x2 = vertices.ElementAt(path.GetPath()[i+1]).GetX();
             y2 = vertices.ElementAt(path.GetPath()[i+1]).GetY();
 
-            canvas.DrawLine(Pens.Blue, x1, y1, x2, y2);
+            canvas.FillEllipse(Brushes.Black, x2 - 5, y2 - 5, 10, 10);
+
+
+
+            canvas.DrawLine(pen, x1, y1, x2, y2);
             pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i +1]).GetWeight();
+
         }
 
-        canvas.DrawLine(Pens.Blue, x2, y2, x, y);
+       
+
+        canvas.DrawLine(pen, x2, y2, x, y);
         pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[0]).GetWeight();
 
         return pathWeight;
@@ -290,7 +354,6 @@ public class WUGraph
 
         pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[0]).GetWeight();
 
-        //MessageBox.Show(pathWeight.ToString());
         return pathWeight;
     }
 

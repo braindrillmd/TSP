@@ -44,14 +44,13 @@ namespace TSP
         {
             WUGraphPath path = new WUGraphPath(Convert.ToInt32(verticesNumTextBox.Lines[0]));
             path.GenerateRandomPathFrom(Convert.ToInt32(beginFromTextBox.Lines[0]));
-            graph.Draw(bitmapCanvas, canvasPictureBox);
+            //graph.Draw(bitmapCanvas, canvasPictureBox);
             pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
+            //graph.DrawPath(path, canvas);
         }
 
         private void mCBEbutton_Click(object sender, EventArgs e)
         {
-            graph.Draw(bitmapCanvas, canvasPictureBox);
-
             WUGraphPath path = graph.MCE(Convert.ToInt32(threadsTextBox.Lines[0]),
                                          Convert.ToInt32(experimentsTextBox.Lines[0]),
                                          Convert.ToInt32(beginFromTextBox.Lines[0]));

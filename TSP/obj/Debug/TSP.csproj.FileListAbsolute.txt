@@ -7,3 +7,12 @@ D:\Home\Valery\Documents\Visual Studio Projects\TSP\TSP\obj\Debug\TSP.csproj.Gen
 D:\Home\Valery\Documents\Visual Studio Projects\TSP\TSP\obj\Debug\TSP.exe
 D:\Home\Valery\Documents\Visual Studio Projects\TSP\TSP\obj\Debug\TSP.pdb
 D:\Home\Valery\Documents\Visual Studio Projects\TSP\TSP\obj\Debug\TSP.MainForm.resources
+D:\Home\Valery\GitHub\TSP\TSP\bin\Debug\TSP.exe.config
+D:\Home\Valery\GitHub\TSP\TSP\obj\Debug\TSP.exe
+D:\Home\Valery\GitHub\TSP\TSP\obj\Debug\TSP.pdb
+D:\Home\Valery\GitHub\TSP\TSP\obj\Debug\TSP.csprojResolveAssemblyReference.cache
+D:\Home\Valery\GitHub\TSP\TSP\obj\Debug\TSP.MainForm.resources
+D:\Home\Valery\GitHub\TSP\TSP\obj\Debug\TSP.Properties.Resources.resources
+D:\Home\Valery\GitHub\TSP\TSP\obj\Debug\TSP.csproj.GenerateResource.Cache
+D:\Home\Valery\GitHub\TSP\TSP\bin\Debug\TSP.exe
+D:\Home\Valery\GitHub\TSP\TSP\bin\Debug\TSP.pdb
