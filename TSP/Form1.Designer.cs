@@ -46,11 +46,22 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.canvasPictureBox = new System.Windows.Forms.PictureBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.from = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.to = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buttonApply = new System.Windows.Forms.Button();
+            this.buttonLoadImage = new System.Windows.Forms.Button();
+            this.buttonEditingStart = new System.Windows.Forms.Button();
+            this.buttonEditingStop = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasPictureBox)).BeginInit();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // generateButton
@@ -222,12 +233,101 @@
             this.canvasPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.canvasPictureBox.TabIndex = 17;
             this.canvasPictureBox.TabStop = false;
+            this.canvasPictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.canvasPictureBox_MouseClick);
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.buttonEditingStop);
+            this.groupBox5.Controls.Add(this.buttonEditingStart);
+            this.groupBox5.Location = new System.Drawing.Point(459, 12);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(94, 99);
+            this.groupBox5.TabIndex = 20;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Editing";
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.from,
+            this.to,
+            this.cost});
+            this.dataGridView1.Location = new System.Drawing.Point(1096, 12);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(240, 634);
+            this.dataGridView1.TabIndex = 21;
+            // 
+            // from
+            // 
+            this.from.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.from.HeaderText = "From";
+            this.from.Name = "from";
+            // 
+            // to
+            // 
+            this.to.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.to.HeaderText = "To";
+            this.to.Name = "to";
+            this.to.Width = 45;
+            // 
+            // cost
+            // 
+            this.cost.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.cost.HeaderText = "Cost";
+            this.cost.Name = "cost";
+            this.cost.Width = 53;
+            // 
+            // buttonApply
+            // 
+            this.buttonApply.Location = new System.Drawing.Point(1096, 652);
+            this.buttonApply.Name = "buttonApply";
+            this.buttonApply.Size = new System.Drawing.Size(75, 23);
+            this.buttonApply.TabIndex = 22;
+            this.buttonApply.Text = "Apply";
+            this.buttonApply.UseVisualStyleBackColor = true;
+            this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+            // 
+            // buttonLoadImage
+            // 
+            this.buttonLoadImage.Enabled = false;
+            this.buttonLoadImage.Location = new System.Drawing.Point(560, 20);
+            this.buttonLoadImage.Name = "buttonLoadImage";
+            this.buttonLoadImage.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadImage.TabIndex = 23;
+            this.buttonLoadImage.Text = "Load image";
+            this.buttonLoadImage.UseVisualStyleBackColor = true;
+            this.buttonLoadImage.Click += new System.EventHandler(this.buttonLoadImage_Click);
+            // 
+            // buttonEditingStart
+            // 
+            this.buttonEditingStart.Location = new System.Drawing.Point(7, 20);
+            this.buttonEditingStart.Name = "buttonEditingStart";
+            this.buttonEditingStart.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditingStart.TabIndex = 0;
+            this.buttonEditingStart.Text = "Start";
+            this.buttonEditingStart.UseVisualStyleBackColor = true;
+            this.buttonEditingStart.Click += new System.EventHandler(this.buttonEditingStart_Click);
+            // 
+            // buttonEditingStop
+            // 
+            this.buttonEditingStop.Location = new System.Drawing.Point(7, 49);
+            this.buttonEditingStop.Name = "buttonEditingStop";
+            this.buttonEditingStop.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditingStop.TabIndex = 1;
+            this.buttonEditingStop.Text = "Stop";
+            this.buttonEditingStop.UseVisualStyleBackColor = true;
+            this.buttonEditingStop.Click += new System.EventHandler(this.buttonEditingStop_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1348, 687);
+            this.Controls.Add(this.buttonLoadImage);
+            this.Controls.Add(this.buttonApply);
+            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.canvasPictureBox);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -237,6 +337,7 @@
             this.Name = "MainForm";
             this.Text = "TSP";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.canvasPictureBox_MouseClick);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -246,6 +347,8 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasPictureBox)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -271,6 +374,15 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.PictureBox canvasPictureBox;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button buttonApply;
+        private System.Windows.Forms.DataGridViewTextBoxColumn from;
+        private System.Windows.Forms.DataGridViewTextBoxColumn to;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cost;
+        private System.Windows.Forms.Button buttonLoadImage;
+        private System.Windows.Forms.Button buttonEditingStop;
+        private System.Windows.Forms.Button buttonEditingStart;
     }
 }
 
