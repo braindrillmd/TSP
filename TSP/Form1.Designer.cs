@@ -47,14 +47,14 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.canvasPictureBox = new System.Windows.Forms.PictureBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.buttonEditingStop = new System.Windows.Forms.Button();
+            this.buttonEditingStart = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.from = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.to = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonApply = new System.Windows.Forms.Button();
             this.buttonLoadImage = new System.Windows.Forms.Button();
-            this.buttonEditingStart = new System.Windows.Forms.Button();
-            this.buttonEditingStop = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -246,6 +246,26 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Editing";
             // 
+            // buttonEditingStop
+            // 
+            this.buttonEditingStop.Location = new System.Drawing.Point(7, 49);
+            this.buttonEditingStop.Name = "buttonEditingStop";
+            this.buttonEditingStop.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditingStop.TabIndex = 1;
+            this.buttonEditingStop.Text = "Random";
+            this.buttonEditingStop.UseVisualStyleBackColor = true;
+            this.buttonEditingStop.Click += new System.EventHandler(this.buttonEditingStop_Click);
+            // 
+            // buttonEditingStart
+            // 
+            this.buttonEditingStart.Location = new System.Drawing.Point(7, 20);
+            this.buttonEditingStart.Name = "buttonEditingStart";
+            this.buttonEditingStart.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditingStart.TabIndex = 0;
+            this.buttonEditingStart.Text = "Map";
+            this.buttonEditingStart.UseVisualStyleBackColor = true;
+            this.buttonEditingStart.Click += new System.EventHandler(this.buttonEditingStart_Click);
+            // 
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -298,26 +318,6 @@
             this.buttonLoadImage.Text = "Load image";
             this.buttonLoadImage.UseVisualStyleBackColor = true;
             this.buttonLoadImage.Click += new System.EventHandler(this.buttonLoadImage_Click);
-            // 
-            // buttonEditingStart
-            // 
-            this.buttonEditingStart.Location = new System.Drawing.Point(7, 20);
-            this.buttonEditingStart.Name = "buttonEditingStart";
-            this.buttonEditingStart.Size = new System.Drawing.Size(75, 23);
-            this.buttonEditingStart.TabIndex = 0;
-            this.buttonEditingStart.Text = "Start";
-            this.buttonEditingStart.UseVisualStyleBackColor = true;
-            this.buttonEditingStart.Click += new System.EventHandler(this.buttonEditingStart_Click);
-            // 
-            // buttonEditingStop
-            // 
-            this.buttonEditingStop.Location = new System.Drawing.Point(7, 49);
-            this.buttonEditingStop.Name = "buttonEditingStop";
-            this.buttonEditingStop.Size = new System.Drawing.Size(75, 23);
-            this.buttonEditingStop.TabIndex = 1;
-            this.buttonEditingStop.Text = "Stop";
-            this.buttonEditingStop.UseVisualStyleBackColor = true;
-            this.buttonEditingStop.Click += new System.EventHandler(this.buttonEditingStop_Click);
             // 
             // MainForm
             // 

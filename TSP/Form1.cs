@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace TSP
 {
-    enum Mode { EDIT, SIMPLE };
+    enum Mode { REAL_MAP, RANDOM };
 
     public partial class MainForm : Form
     {
@@ -35,7 +35,7 @@ namespace TSP
             graph = new WUGraph();
             bitmapCanvas = new Bitmap(this.Width, this.Height - 225);
             canvasPictureBox.Image = bitmapCanvas;
-            mode = Mode.SIMPLE;
+            mode = Mode.RANDOM;
             count = 0;
         }
 
@@ -71,13 +71,14 @@ namespace TSP
             //canvas.DrawImage(map, 0, 155);
             path.GenerateRandomPathFrom(Convert.ToInt32(beginFromTextBox.Lines[0]));
             canvas.Clear(SystemColors.Control);
-            if (mode == Mode.SIMPLE)
+            if (mode == Mode.RANDOM)
             {
                 pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
             }
             else
             {
-                pathWeightTextBox.Text = (graph.DrawPath(path, new Bitmap(map), canvasPictureBox).ToString());
+                //pathWeightTextBox.Text = (graph.DrawPath(path, new Bitmap(map), canvasPictureBox).ToString());
+                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, map, canvasPictureBox).ToString());
             }
             //graph.DrawPath(path, canvas);
         }
@@ -87,7 +88,14 @@ namespace TSP
             WUGraphPath path = graph.MCE(Convert.ToInt32(threadsTextBox.Lines[0]),
                                          Convert.ToInt32(experimentsTextBox.Lines[0]),
                                          Convert.ToInt32(beginFromTextBox.Lines[0]));
-            pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
+            if (mode == Mode.RANDOM)
+            {
+                pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
+            }
+            else
+            {
+                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, map, canvasPictureBox).ToString());
+            }
         }
 
         private void radioButtonSimpleMode_CheckedChanged(object sender, EventArgs e)
@@ -108,8 +116,6 @@ namespace TSP
                               graph.GetVerticeByName(dataGridView1.Rows[i].Cells[1].Value.ToString()),
                               Convert.ToInt16(dataGridView1.Rows[i].Cells[2].Value));
             }
-            //TableFill();
-            //dataGridView1.Update();
         }
 
         private void buttonLoadImage_Click(object sender, EventArgs e)
@@ -131,12 +137,14 @@ namespace TSP
 
         private void canvasPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
-            if (mode == Mode.EDIT)
+            if (mode == Mode.REAL_MAP)
             {
-                Graphics canvas0 = Graphics.FromImage(canvasPictureBox.Image);
+                Bitmap bitmap = new Bitmap(canvasPictureBox.Image);
+                Graphics canvas0 = Graphics.FromImage(bitmap);
+                canvasPictureBox.Image = bitmap;
                 canvas0.FillEllipse(Brushes.Red, e.X - 5, e.Y - 5, 10, 10);
                 graph.VerticeAdd(new WUGraphVertice(e.X, e.Y, count.ToString()));
-                canvasPictureBox.Image = new Bitmap(canvasPictureBox.Image.Width, canvasPictureBox.Image.Height, canvas0);
+                //canvasPictureBox.Image = new Bitmap(canvasPictureBox.Image.Width, canvasPictureBox.Image.Height, canvas0);
                 dataGridView1.Rows.Add(count, count, 0);
                 count++;
 
@@ -148,13 +156,13 @@ namespace TSP
 
         private void buttonEditingStart_Click(object sender, EventArgs e)
         {
-            mode = Mode.EDIT;
+            mode = Mode.REAL_MAP;
             buttonLoadImage.Enabled = true;
         }
 
         private void buttonEditingStop_Click(object sender, EventArgs e)
         {
-            mode = Mode.SIMPLE;
+            mode = Mode.REAL_MAP;
             buttonLoadImage.Enabled = false;
         }
     }

@@ -338,6 +338,72 @@ public class WUGraph
         output.Image = bitmapCanvas;
     }
 
+    public int DrawPathOnMap(WUGraphPath path, Graphics canvas, Bitmap map, PictureBox output)
+    {
+        int x1 = 0;
+        int y1 = 0;
+        int x2 = 0;
+        int y2 = 0;
+        int pathWeight = 0;
+        int i = 0;
+
+        int penWidth = 2;
+        double arrowCapWidth = 4.5;
+        AdjustableArrowCap cap = new AdjustableArrowCap((float)arrowCapWidth, (float)arrowCapWidth);
+        System.Drawing.Font font;
+        font = new Font("Arial", 12);
+        System.Drawing.SolidBrush brush = new SolidBrush(Color.Blue);
+        Pen pen = new Pen(Color.Red, penWidth);
+        pen.CustomEndCap = cap;
+
+        canvas.Clear(SystemColors.Control);
+        canvas = Graphics.FromImage(map);
+
+        int x = vertices.ElementAt(path.GetPath()[0]).GetX();
+        int y = vertices.ElementAt(path.GetPath()[0]).GetY();
+        canvas.FillEllipse(Brushes.Blue, x - 5, y - 5, 10, 10);
+        canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);
+
+        for (i = 0; i < path.GetLength() - 1; i++)
+        {
+
+
+            x1 = vertices.ElementAt(path.GetPath()[i]).GetX();
+            y1 = vertices.ElementAt(path.GetPath()[i]).GetY();
+            x2 = vertices.ElementAt(path.GetPath()[i + 1]).GetX();
+            y2 = vertices.ElementAt(path.GetPath()[i + 1]).GetY();
+
+            canvas.FillEllipse(Brushes.Black, x2 - 5, y2 - 5, 10, 10);
+            canvas.DrawString(path.AtIndex(i + 1).ToString(), font, brush, x2 + 10, y2 - 10);
+
+            canvas.DrawLine(pen, x1, y1, x2, y2);
+            if (FindEdge(path.GetPath()[i], path.GetPath()[i + 1]) == null)
+            {
+                return -1;
+            }
+            else
+            {
+                pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i + 1]).GetWeight();
+            }
+
+        }
+
+
+
+        canvas.DrawLine(pen, x2, y2, x, y);
+        if (FindEdge(path.GetPath()[i], path.GetPath()[0]) == null)
+        {
+            return -1;
+        }
+        else
+        {
+            pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[0]).GetWeight();
+        }
+
+        output.Image = map;
+
+        return pathWeight;
+    }
 
     public int DrawPath(WUGraphPath path, Graphics canvas )
     {
@@ -358,7 +424,9 @@ public class WUGraph
         Pen pen = new Pen(Color.Red, penWidth);
         pen.CustomEndCap = cap;
 
-        //canvas.Clear(SystemColors.Control);
+        //THE SPOT
+        canvas.Clear(SystemColors.Control);
+
 
         int x = vertices.ElementAt(path.GetPath()[0]).GetX();
         int y = vertices.ElementAt(path.GetPath()[0]).GetY();
@@ -384,6 +452,7 @@ public class WUGraph
             }
             else
             {
+                
                 pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i + 1]).GetWeight();
             }
 
@@ -421,7 +490,14 @@ public class WUGraph
 
         for (i = 0; i < path.GetLength() - 1; i++)
         {
-            pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i + 1]).GetWeight();
+            if (FindEdge(path.GetPath()[i], path.GetPath()[i + 1]) != null)
+            {
+                pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i + 1]).GetWeight();
+            }
+            else
+            {
+                return int.MaxValue;
+            }
         }
 
         pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[0]).GetWeight();
@@ -450,10 +526,9 @@ public class WUGraph
                 minPathWeight = currentPathWeight;
             }
         }
-
-        //Thread.Sleep(0);
     }
     
+
     public WUGraphPath MCE(int threadsNumber, int repitations, int from)
     {
         if (sequence != null)
@@ -486,7 +561,7 @@ public class WUGraph
         int minPathIndex = 0;
         for(int i = 1; i < threadsNumber; i++)
         {
-            if(sequence[i].pathWeight < minWeight)
+            if(sequence[i].pathWeight < minWeight && sequence[i].pathWeight >= 0)
             {
                 minWeight = sequence[i].pathWeight;
                 minPathIndex = i;
