@@ -144,7 +144,7 @@ namespace TSP
 
         private void buttonRandomMode_Click(object sender, EventArgs e)
         {
-            mode = Mode.REAL_MAP;
+            mode = Mode.RANDOM;
             buttonLoadImage.Enabled = false;
         }
 
