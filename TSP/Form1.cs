@@ -21,8 +21,6 @@ namespace TSP
         Mode mode;
         Bitmap map;
         int count;
-        Bitmap mapDotted;
-
 
         public MainForm()
         {
@@ -39,7 +37,7 @@ namespace TSP
             count = 0;
         }
 
-        private void TableFill()
+        private void _TableFill()
         {
             for (int i = 0; i < graph.GetEdgesNumber(); i++)
             {
@@ -58,29 +56,26 @@ namespace TSP
             pathWeightTextBox.Text = "";
             dataGridView1.Rows.Clear();
             dataGridView1.Refresh();
-            TableFill();
+            _TableFill();
             dataGridView1.Update();
-
-
         }
 
         private void drawPathButton_Click(object sender, EventArgs e)
         {
             
             WUGraphPath path = new WUGraphPath(Convert.ToInt32(graph.GetVerticesNumber()));
-            //canvas.DrawImage(map, 0, 155);
             path.GenerateRandomPathFrom(Convert.ToInt32(beginFromTextBox.Lines[0]));
+
             canvas.Clear(SystemColors.Control);
+
             if (mode == Mode.RANDOM)
             {
                 pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
             }
             else
             {
-                //pathWeightTextBox.Text = (graph.DrawPath(path, new Bitmap(map), canvasPictureBox).ToString());
-                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, map, canvasPictureBox).ToString());
+                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, new Bitmap(map), canvasPictureBox).ToString());
             }
-            //graph.DrawPath(path, canvas);
         }
 
         private void mCBEbutton_Click(object sender, EventArgs e)
@@ -94,17 +89,9 @@ namespace TSP
             }
             else
             {
-                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, map, canvasPictureBox).ToString());
+                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, new Bitmap(map), canvasPictureBox).ToString());
             }
         }
-
-        private void radioButtonSimpleMode_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-
- 
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
@@ -125,14 +112,7 @@ namespace TSP
             ofd.ShowDialog();
             mapPath = ofd.FileName;
             map = new Bitmap(mapPath);
-            mapDotted = new Bitmap(mapPath);
-            //canvas.DrawImage(map, 0, 155);
             canvasPictureBox.Image = map;
-            //canvas = Graphics.FromImage(map);
-            //graph.Draw(map, canvasPictureBox);
-
-            
-
         }
 
         private void canvasPictureBox_MouseClick(object sender, MouseEventArgs e)
@@ -143,27 +123,59 @@ namespace TSP
                 Graphics canvas0 = Graphics.FromImage(bitmap);
                 canvasPictureBox.Image = bitmap;
                 canvas0.FillEllipse(Brushes.Red, e.X - 5, e.Y - 5, 10, 10);
+
+                Font font = new Font("Arial", 12);
+                System.Drawing.SolidBrush brush = new SolidBrush(Color.Blue);
+                canvas0.DrawString(count.ToString(), font, brush, e.X + 10, e.Y - 10);
+
                 graph.VerticeAdd(new WUGraphVertice(e.X, e.Y, count.ToString()));
-                //canvasPictureBox.Image = new Bitmap(canvasPictureBox.Image.Width, canvasPictureBox.Image.Height, canvas0);
                 dataGridView1.Rows.Add(count, count, 0);
                 count++;
 
                 dataGridView1.Update();
             }
-
-
         }
 
-        private void buttonEditingStart_Click(object sender, EventArgs e)
+        private void buttonMapMode_Click(object sender, EventArgs e)
         {
             mode = Mode.REAL_MAP;
             buttonLoadImage.Enabled = true;
         }
 
-        private void buttonEditingStop_Click(object sender, EventArgs e)
+        private void buttonRandomMode_Click(object sender, EventArgs e)
         {
             mode = Mode.REAL_MAP;
             buttonLoadImage.Enabled = false;
+        }
+
+        private void beginFromTextBox_TextChanged(object sender, EventArgs e)
+        {
+            int i;
+
+            if (int.TryParse(beginFromTextBox.Text, out i))
+            {
+                mCBEbutton.Enabled = true;
+                drawPathButton.Enabled = true;
+            }
+            else
+            {
+                mCBEbutton.Enabled = false;
+                drawPathButton.Enabled = false;
+            }
+        }
+
+        private void verticesNumTextBox_TextChanged(object sender, EventArgs e)
+        {
+            int i;
+
+            if (int.TryParse(verticesNumTextBox.Text, out i) && i > 0)
+            {
+                generateButton.Enabled = true;
+            }
+            else
+            {
+                generateButton.Enabled = false;
+            }
         }
     }
 }

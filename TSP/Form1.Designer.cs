@@ -44,21 +44,19 @@
             this.threadsTextBox = new System.Windows.Forms.TextBox();
             this.experimentsTextBox = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.canvasPictureBox = new System.Windows.Forms.PictureBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.buttonEditingStop = new System.Windows.Forms.Button();
-            this.buttonEditingStart = new System.Windows.Forms.Button();
+            this.buttonLoadImage = new System.Windows.Forms.Button();
+            this.buttonRandomMode = new System.Windows.Forms.Button();
+            this.buttonMapMode = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.from = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.to = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonApply = new System.Windows.Forms.Button();
-            this.buttonLoadImage = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasPictureBox)).BeginInit();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -66,6 +64,7 @@
             // 
             // generateButton
             // 
+            this.generateButton.Enabled = false;
             this.generateButton.Location = new System.Drawing.Point(6, 19);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(75, 23);
@@ -80,9 +79,11 @@
             this.verticesNumTextBox.Name = "verticesNumTextBox";
             this.verticesNumTextBox.Size = new System.Drawing.Size(75, 20);
             this.verticesNumTextBox.TabIndex = 1;
+            this.verticesNumTextBox.TextChanged += new System.EventHandler(this.verticesNumTextBox_TextChanged);
             // 
             // drawPathButton
             // 
+            this.drawPathButton.Enabled = false;
             this.drawPathButton.Location = new System.Drawing.Point(87, 19);
             this.drawPathButton.Name = "drawPathButton";
             this.drawPathButton.Size = new System.Drawing.Size(75, 23);
@@ -111,7 +112,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 19);
+            this.label2.Location = new System.Drawing.Point(84, 45);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(72, 13);
             this.label2.TabIndex = 5;
@@ -119,10 +120,11 @@
             // 
             // beginFromTextBox
             // 
-            this.beginFromTextBox.Location = new System.Drawing.Point(9, 35);
+            this.beginFromTextBox.Location = new System.Drawing.Point(87, 61);
             this.beginFromTextBox.Name = "beginFromTextBox";
             this.beginFromTextBox.Size = new System.Drawing.Size(75, 20);
             this.beginFromTextBox.TabIndex = 6;
+            this.beginFromTextBox.TextChanged += new System.EventHandler(this.beginFromTextBox_TextChanged);
             // 
             // label3
             // 
@@ -135,7 +137,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.generateButton);
+            this.groupBox1.Controls.Add(this.beginFromTextBox);
             this.groupBox1.Controls.Add(this.drawPathButton);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.verticesNumTextBox);
@@ -160,6 +164,7 @@
             // 
             // mCBEbutton
             // 
+            this.mCBEbutton.Enabled = false;
             this.mCBEbutton.Location = new System.Drawing.Point(6, 19);
             this.mCBEbutton.Name = "mCBEbutton";
             this.mCBEbutton.Size = new System.Drawing.Size(75, 23);
@@ -214,17 +219,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "MCE";
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.label2);
-            this.groupBox4.Controls.Add(this.beginFromTextBox);
-            this.groupBox4.Location = new System.Drawing.Point(359, 12);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(90, 100);
-            this.groupBox4.TabIndex = 16;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Parameters";
-            // 
             // canvasPictureBox
             // 
             this.canvasPictureBox.Location = new System.Drawing.Point(5, 118);
@@ -237,34 +231,46 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.buttonEditingStop);
-            this.groupBox5.Controls.Add(this.buttonEditingStart);
-            this.groupBox5.Location = new System.Drawing.Point(459, 12);
+            this.groupBox5.Controls.Add(this.buttonLoadImage);
+            this.groupBox5.Controls.Add(this.buttonRandomMode);
+            this.groupBox5.Controls.Add(this.buttonMapMode);
+            this.groupBox5.Location = new System.Drawing.Point(359, 13);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(94, 99);
+            this.groupBox5.Size = new System.Drawing.Size(172, 99);
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Editing";
+            this.groupBox5.Text = "Experiment mode";
             // 
-            // buttonEditingStop
+            // buttonLoadImage
             // 
-            this.buttonEditingStop.Location = new System.Drawing.Point(7, 49);
-            this.buttonEditingStop.Name = "buttonEditingStop";
-            this.buttonEditingStop.Size = new System.Drawing.Size(75, 23);
-            this.buttonEditingStop.TabIndex = 1;
-            this.buttonEditingStop.Text = "Random";
-            this.buttonEditingStop.UseVisualStyleBackColor = true;
-            this.buttonEditingStop.Click += new System.EventHandler(this.buttonEditingStop_Click);
+            this.buttonLoadImage.Enabled = false;
+            this.buttonLoadImage.Location = new System.Drawing.Point(88, 20);
+            this.buttonLoadImage.Name = "buttonLoadImage";
+            this.buttonLoadImage.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadImage.TabIndex = 23;
+            this.buttonLoadImage.Text = "Load image";
+            this.buttonLoadImage.UseVisualStyleBackColor = true;
+            this.buttonLoadImage.Click += new System.EventHandler(this.buttonLoadImage_Click);
             // 
-            // buttonEditingStart
+            // buttonRandomMode
             // 
-            this.buttonEditingStart.Location = new System.Drawing.Point(7, 20);
-            this.buttonEditingStart.Name = "buttonEditingStart";
-            this.buttonEditingStart.Size = new System.Drawing.Size(75, 23);
-            this.buttonEditingStart.TabIndex = 0;
-            this.buttonEditingStart.Text = "Map";
-            this.buttonEditingStart.UseVisualStyleBackColor = true;
-            this.buttonEditingStart.Click += new System.EventHandler(this.buttonEditingStart_Click);
+            this.buttonRandomMode.Location = new System.Drawing.Point(7, 49);
+            this.buttonRandomMode.Name = "buttonRandomMode";
+            this.buttonRandomMode.Size = new System.Drawing.Size(75, 23);
+            this.buttonRandomMode.TabIndex = 1;
+            this.buttonRandomMode.Text = "Random";
+            this.buttonRandomMode.UseVisualStyleBackColor = true;
+            this.buttonRandomMode.Click += new System.EventHandler(this.buttonRandomMode_Click);
+            // 
+            // buttonMapMode
+            // 
+            this.buttonMapMode.Location = new System.Drawing.Point(7, 20);
+            this.buttonMapMode.Name = "buttonMapMode";
+            this.buttonMapMode.Size = new System.Drawing.Size(75, 23);
+            this.buttonMapMode.TabIndex = 0;
+            this.buttonMapMode.Text = "Map";
+            this.buttonMapMode.UseVisualStyleBackColor = true;
+            this.buttonMapMode.Click += new System.EventHandler(this.buttonMapMode_Click);
             // 
             // dataGridView1
             // 
@@ -308,28 +314,15 @@
             this.buttonApply.UseVisualStyleBackColor = true;
             this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
             // 
-            // buttonLoadImage
-            // 
-            this.buttonLoadImage.Enabled = false;
-            this.buttonLoadImage.Location = new System.Drawing.Point(560, 20);
-            this.buttonLoadImage.Name = "buttonLoadImage";
-            this.buttonLoadImage.Size = new System.Drawing.Size(75, 23);
-            this.buttonLoadImage.TabIndex = 23;
-            this.buttonLoadImage.Text = "Load image";
-            this.buttonLoadImage.UseVisualStyleBackColor = true;
-            this.buttonLoadImage.Click += new System.EventHandler(this.buttonLoadImage_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1348, 687);
-            this.Controls.Add(this.buttonLoadImage);
             this.Controls.Add(this.buttonApply);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.canvasPictureBox);
-            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -344,8 +337,6 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasPictureBox)).EndInit();
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
@@ -372,7 +363,6 @@
         private System.Windows.Forms.TextBox threadsTextBox;
         private System.Windows.Forms.TextBox experimentsTextBox;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.PictureBox canvasPictureBox;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.DataGridView dataGridView1;
@@ -381,8 +371,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn to;
         private System.Windows.Forms.DataGridViewTextBoxColumn cost;
         private System.Windows.Forms.Button buttonLoadImage;
-        private System.Windows.Forms.Button buttonEditingStop;
-        private System.Windows.Forms.Button buttonEditingStart;
+        private System.Windows.Forms.Button buttonRandomMode;
+        private System.Windows.Forms.Button buttonMapMode;
     }
 }
 
