@@ -6,6 +6,175 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Drawing.Drawing2D;
 
+enum CurrentDonor { FIRST, SECOND };
+
+public class Chromosome : WUGraphPath
+{
+    public Chromosome(int length) : base(length){ }
+
+    public Chromosome Crossingover(Chromosome that)
+    {
+        Chromosome chromosome = new Chromosome(length);
+        int currentVertice = 0;
+        CurrentDonor currentDonor = CurrentDonor.FIRST;
+
+        for (int i = 0; i < length; i++)
+        {
+            if (i % 2 == 0)
+            {
+                currentDonor = CurrentDonor.FIRST;
+
+                int count = 0;
+
+                while (count <= length)
+                {
+
+                    if (_IsInPath(chromosome, this.AtIndex(currentVertice), i))
+                    {
+                        currentDonor = CurrentDonor.SECOND;
+                    }
+                    else {                    
+                        currentVertice = chromosome.pathIndexes[i] = this.AtIndex(currentVertice);
+                        break;
+                    }
+
+                    if (_IsInPath(chromosome, that.AtIndex(currentVertice), i))
+                    {
+                        currentDonor = CurrentDonor.FIRST;
+                        currentVertice = _GetNextVerticeIndex(currentVertice, this);
+                    }
+                    else
+                    {
+                        currentVertice = chromosome.pathIndexes[i] = that.AtIndex(currentVertice);
+                        break;
+                    }
+
+                    count++;
+                }
+            }
+            else
+            {
+                currentDonor = CurrentDonor.SECOND;
+
+                int count = 0;
+
+                while (count <= length)
+                {
+
+                    if (_IsInPath(chromosome, that.AtIndex(currentVertice), i))
+                    {
+                        currentDonor = CurrentDonor.FIRST;
+                    }
+                    else
+                    {
+                        currentVertice = chromosome.pathIndexes[i] = that.AtIndex(currentVertice);
+                        break;
+                    }
+
+                    if (_IsInPath(chromosome, this.AtIndex(currentVertice), i))
+                    {
+                        currentDonor = CurrentDonor.SECOND;
+                        currentVertice = _GetNextVerticeIndex(currentVertice, that);
+                    }
+                    else
+                    {
+                        currentVertice = chromosome.pathIndexes[i] = this.AtIndex(currentVertice);
+                        break;
+                    }
+
+                    count++;
+                }
+            }
+
+
+            /*if(this.pathIndexes[currentVertice] == that.pathIndexes[currentVertice])
+            {
+                chromosome.pathIndexes[i] = pathIndexes[currentVertice];
+            }
+            else
+            {
+            //As cryptic as it is
+                if(i % 2 == 1)
+                {
+                    if (!_IsInPath(that, that.pathIndexes[currentVertice], i))
+                    {
+                        currentVertice = chromosome.pathIndexes[currentVertice] = that.pathIndexes[currentVertice];
+                    }
+                    else
+                    {
+                        if(!_IsInPath(this, this.pathIndexes[currentVertice], i))
+                        {
+                            currentVertice = chromosome.pathIndexes[currentVertice] = this.pathIndexes[currentVertice];
+                        }
+                        else
+                        {
+                            int count = 0;
+
+                            while (_IsInPath(that, that.pathIndexes[currentVertice], i) && count < length)
+                            {
+                                currentVertice = _GetNextVerticeIndex(currentVertice, that);
+                                count++;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (!_IsInPath(this, this.pathIndexes[currentVertice], i))
+                    {
+                        currentVertice = chromosome.pathIndexes[currentVertice] = this.pathIndexes[currentVertice];
+                    }
+                    else
+                    {
+                        if (!_IsInPath(that, that.pathIndexes[currentVertice], i))
+                        {
+                            currentVertice = chromosome.pathIndexes[currentVertice] = that.pathIndexes[currentVertice];
+                        }
+                        else
+                        {
+                            int count = 0;
+
+                            while (_IsInPath(this, this.pathIndexes[currentVertice], i) && count < length)
+                            {
+                                currentVertice = _GetNextVerticeIndex(currentVertice, this);
+                                count++;
+                            }
+                        }
+                    }
+                }
+            }*/
+        }
+
+        return chromosome;
+    }
+
+    private int _GetNextVerticeIndex(int vertice, WUGraphPath path)
+    {
+        for(int i = 0; i < length; i++)
+        {
+            if(path.AtIndex(i) == vertice && i < length - 1)
+            {
+                return i+1;
+            }
+        }
+
+        return path.AtIndex(0);
+    }
+
+    private bool _IsInPath(WUGraphPath path, int what, int before)
+    {
+        for(int i = 0; i < before; i++)
+        {
+            if (path.AtIndex(i) == what)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}//class Chromosome
+
 public static class Randomizer
 {
     static Random r;
@@ -19,168 +188,6 @@ public static class Randomizer
         return r.Next(from, to);
     }
 }
-
-public class WUGraphVertice
-{
-    int x;
-    int y;
-    string name;
-
-    public WUGraphVertice(int argX, int argY, string argName)
-    {
-        x = argX;
-        y = argY;
-        name = argName;
-    }
-
-    //Some of these set-functions are useless
-    public string GetName()
-    {
-        return name;
-    }
-
-    public int GetX()
-    {
-        return x;
-    }
-
-    public int GetY()
-    {
-        return y;
-    }
-
-    public void SetX(int x)
-    {
-        this.x = x;
-    }
-
-    public void SetY(int y)
-    {
-        this.y = y;
-    }
-
-    public void SetName(string name)
-    {
-        this.name = name;
-    } 
-}
-
-public class WUGraphEdge
-{
-    int vertice1Index;
-    int vertice2Index;
-    int weight;
-
-    public WUGraphEdge(int argVertice1Index, int argVertice2Index, int argWeight)
-    {
-        vertice1Index = argVertice1Index;
-        vertice2Index = argVertice2Index;
-        weight = argWeight;
-    }
-
-    public int GetVertice1Index()
-    {
-        return vertice1Index;
-    }
-
-    public int GetVertice2Index()
-    {
-        return vertice2Index;
-    }
-
-    public int GetWeight()
-    {
-        return weight;
-    }
-
-    public void SetWeight(int weight)
-    {
-        this.weight = weight;
-    }
-
-}
-
-public class WUGraphPath
-{
-    int[] pathIndexes;
-    int length;
-
-    public WUGraphPath(int pathLength)
-    {
-        length = pathLength;
-        pathIndexes = new int[length];
-    }
-
-    ~WUGraphPath()
-    {
-        Array.Clear(pathIndexes, 0, length);
-    }
-
-    //TODO: try to get rid of this kinda strage function
-    public int AtIndex(int n)
-    {
-        return pathIndexes[n];
-    }
-
-    public void CopyPath(WUGraphPath path)
-    {
-        for (int i = 0; i < length; i++)
-        {
-            pathIndexes[i] = path.AtIndex(i);
-        }
-    }
-
-    public int GetLength()
-    {
-        return length;
-    }
-
-    //Name kinda lame
-    public int[] GetPath()
-    {
-        return pathIndexes;
-    }
-
-    //Do I really need this one?
-    public void GenerateRandomPath()
-    {
-        List<int> list = new List<int>();
-
-        for (int i = 0; i < length; i++)
-        {
-            list.Add(i);
-        }
-
-        for (int i = 0; i < length; i++)
-        {
-            int d = Randomizer.GetNext(0, list.Count);
-            pathIndexes[i] = list.ElementAt(d);
-            list.RemoveAt(d);
-        }
-    }
-
-    public void GenerateRandomPathFrom(int from)
-    {
-        List<int> list = new List<int>();
-
-        for (int i = 0; i < length; i++)
-        {
-            list.Add(i);
-        }
-
-        pathIndexes[0] = from;
-        list.RemoveAt(from);
-
-        for (int i = 1; i < length; i++)
-        {
-            int d = Randomizer.GetNext(0, list.Count);
-            pathIndexes[i] = list.ElementAt(d);
-            list.RemoveAt(d);
-        }
-    }  
-}
-
-
 
 public class WUGraph
 {
@@ -443,9 +450,9 @@ public class WUGraph
 
     public int GetVerticeIndex(string name)
     {
-        for(int i = 0; i < vertices.Count; i++)
+        for (int i = 0; i < vertices.Count; i++)
         {
-            if(name == vertices.ElementAt(i).GetName())
+            if (name == vertices.ElementAt(i).GetName())
             {
                 return i;
             }
@@ -458,7 +465,7 @@ public class WUGraph
     {
         return vertices.Count;
     }
-   
+
     public void GenerateRandom(int size)
     {
         vertices.Clear();
@@ -564,16 +571,180 @@ public class WUGraph
             int currentPathWeight = PathWeight(currentPath);
 
             if (minPathWeight > currentPathWeight)
-            { 
+            {
                 sequence[(int)n].path.CopyPath(currentPath);
                 sequence[(int)n].pathWeight = currentPathWeight;
                 minPathWeight = currentPathWeight;
             }
         }
-    } 
+    }
 
     public void VerticeAdd(WUGraphVertice vertice)
     {
         vertices.Add(vertice);
     }
 }
+
+public class WUGraphEdge
+{
+    int vertice1Index;
+    int vertice2Index;
+    int weight;
+
+    public WUGraphEdge(int argVertice1Index, int argVertice2Index, int argWeight)
+    {
+        vertice1Index = argVertice1Index;
+        vertice2Index = argVertice2Index;
+        weight = argWeight;
+    }
+
+    public int GetVertice1Index()
+    {
+        return vertice1Index;
+    }
+
+    public int GetVertice2Index()
+    {
+        return vertice2Index;
+    }
+
+    public int GetWeight()
+    {
+        return weight;
+    }
+
+    public void SetWeight(int weight)
+    {
+        this.weight = weight;
+    }
+
+}
+
+public class WUGraphPath
+{
+    protected int[] pathIndexes;
+    protected int length;
+
+    public WUGraphPath(int pathLength)
+    {
+        length = pathLength;
+        pathIndexes = new int[length];
+    }
+
+    ~WUGraphPath()
+    {
+        Array.Clear(pathIndexes, 0, length);
+    }
+
+    //TODO: try to get rid of this kinda strage function
+    public int AtIndex(int n)
+    {
+        return pathIndexes[n];
+    }
+
+    public void CopyPath(WUGraphPath path)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            pathIndexes[i] = path.AtIndex(i);
+        }
+    }
+
+    public int GetLength()
+    {
+        return length;
+    }
+
+    //Name kinda lame
+    public int[] GetPath()
+    {
+        return pathIndexes;
+    }
+
+    //Do I really need this one?
+    public void GenerateRandomPath()
+    {
+        List<int> list = new List<int>();
+
+        for (int i = 0; i < length; i++)
+        {
+            list.Add(i);
+        }
+
+        for (int i = 0; i < length; i++)
+        {
+            int d = Randomizer.GetNext(0, list.Count);
+            pathIndexes[i] = list.ElementAt(d);
+            list.RemoveAt(d);
+        }
+    }
+
+    public void GenerateRandomPathFrom(int from)
+    {
+        List<int> list = new List<int>();
+
+        for (int i = 0; i < length; i++)
+        {
+            list.Add(i);
+        }
+
+        pathIndexes[0] = from;
+        list.RemoveAt(from);
+
+        for (int i = 1; i < length; i++)
+        {
+            int d = Randomizer.GetNext(0, list.Count);
+            pathIndexes[i] = list.ElementAt(d);
+            list.RemoveAt(d);
+        }
+    }  
+}
+
+public class WUGraphVertice
+{
+    int x;
+    int y;
+    string name;
+
+    public WUGraphVertice(int argX, int argY, string argName)
+    {
+        x = argX;
+        y = argY;
+        name = argName;
+    }
+
+    //Some of these set-functions are useless
+    public string GetName()
+    {
+        return name;
+    }
+
+    public int GetX()
+    {
+        return x;
+    }
+
+    public int GetY()
+    {
+        return y;
+    }
+
+    public void SetX(int x)
+    {
+        this.x = x;
+    }
+
+    public void SetY(int y)
+    {
+        this.y = y;
+    }
+
+    public void SetName(string name)
+    {
+        this.name = name;
+    }
+}
+
+
+
+

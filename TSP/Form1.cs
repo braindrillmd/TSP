@@ -156,11 +156,13 @@ namespace TSP
             {
                 mCBEbutton.Enabled = true;
                 drawPathButton.Enabled = true;
+                buttonGARun.Enabled = true;
             }
             else
             {
                 mCBEbutton.Enabled = false;
                 drawPathButton.Enabled = false;
+                buttonGARun.Enabled = false;
             }
         }
 
@@ -175,6 +177,24 @@ namespace TSP
             else
             {
                 generateButton.Enabled = false;
+            }
+        }
+
+        private void buttonGARun_Click(object sender, EventArgs e)
+        {
+            Chromosome path1 = new Chromosome(Convert.ToInt16(verticesNumTextBox.Text));
+            Chromosome path2 = new Chromosome(Convert.ToInt16(verticesNumTextBox.Text));
+            path1.GenerateRandomPath();
+            path2.GenerateRandomPath();
+            Chromosome path = path1.Crossingover(path2);
+
+            if (mode == Mode.RANDOM)
+            { 
+                pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
+            }
+            else
+            {
+                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, new Bitmap(map), canvasPictureBox).ToString());
             }
         }
     }

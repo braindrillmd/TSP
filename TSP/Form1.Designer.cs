@@ -54,12 +54,15 @@
             this.to = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonApply = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.buttonGARun = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasPictureBox)).BeginInit();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // generateButton
@@ -234,7 +237,7 @@
             this.groupBox5.Controls.Add(this.buttonLoadImage);
             this.groupBox5.Controls.Add(this.buttonRandomMode);
             this.groupBox5.Controls.Add(this.buttonMapMode);
-            this.groupBox5.Location = new System.Drawing.Point(359, 13);
+            this.groupBox5.Location = new System.Drawing.Point(538, 13);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(172, 99);
             this.groupBox5.TabIndex = 20;
@@ -314,11 +317,33 @@
             this.buttonApply.UseVisualStyleBackColor = true;
             this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.buttonGARun);
+            this.groupBox4.Location = new System.Drawing.Point(364, 12);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(168, 99);
+            this.groupBox4.TabIndex = 23;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "GA";
+            // 
+            // buttonGARun
+            // 
+            this.buttonGARun.Enabled = false;
+            this.buttonGARun.Location = new System.Drawing.Point(6, 19);
+            this.buttonGARun.Name = "buttonGARun";
+            this.buttonGARun.Size = new System.Drawing.Size(75, 23);
+            this.buttonGARun.TabIndex = 0;
+            this.buttonGARun.Text = "Run";
+            this.buttonGARun.UseVisualStyleBackColor = true;
+            this.buttonGARun.Click += new System.EventHandler(this.buttonGARun_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1348, 687);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.buttonApply);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox5);
@@ -340,6 +365,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.canvasPictureBox)).EndInit();
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -373,6 +399,8 @@
         private System.Windows.Forms.Button buttonLoadImage;
         private System.Windows.Forms.Button buttonRandomMode;
         private System.Windows.Forms.Button buttonMapMode;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button buttonGARun;
     }
 }
 
