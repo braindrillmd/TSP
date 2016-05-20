@@ -35,6 +35,7 @@ namespace TSP
             canvasPictureBox.Image = bitmapCanvas;
             mode = Mode.RANDOM;
             count = 0;
+            buttonRandomMode.Text = "*Random";
         }
 
         private void _TableFill()
@@ -142,12 +143,19 @@ namespace TSP
         {
             mode = Mode.REAL_MAP;
             buttonLoadImage.Enabled = true;
+            buttonMapMode.Text = "*Map";
+            buttonRandomMode.Text = "Random";
+            buttonGARun.Enabled = true;
+            drawPathButton.Enabled = true;
+            mCBEbutton.Enabled = true;
         }
 
         private void buttonRandomMode_Click(object sender, EventArgs e)
         {
             mode = Mode.RANDOM;
             buttonLoadImage.Enabled = false;
+            buttonRandomMode.Text = "*Random";
+            buttonMapMode.Text = "Map";
         }
 
         private void verticesNumTextBox_TextChanged(object sender, EventArgs e)
@@ -166,7 +174,7 @@ namespace TSP
 
         private void buttonGARun_Click(object sender, EventArgs e)
         {
-            Chromosome path1 = new Chromosome(Convert.ToInt16(verticesNumTextBox.Text));
+            Chromosome path1 = new Chromosome(graph.GetVerticesNumber());
             Chromosome path2 = new Chromosome(Convert.ToInt16(verticesNumTextBox.Text));
             path1.GenerateRandomPath();
             path2.GenerateRandomPath();
@@ -174,15 +182,24 @@ namespace TSP
 
             if (mode == Mode.RANDOM)
             {
-                //pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
-                //MessageBox.Show("Child!");
+                Generation generation = new Generation(100, graph);
+                generation.Initialize();
+                pathWeightTextBox.Text = (graph.DrawPath(generation.GetBest(), bitmapCanvas, canvasPictureBox).ToString());
+                MessageBox.Show("Next");
 
-                pathWeightTextBox.Text = (graph.DrawPath(path.Mutate(), bitmapCanvas, canvasPictureBox).ToString());
+                pathWeightTextBox.Text = (graph.DrawPath(generation.NextGeneration().GetBest() , bitmapCanvas, canvasPictureBox).ToString());
             }
             else
             {
                 pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, new Bitmap(map), canvasPictureBox).ToString());
             }
+        }
+
+        private void buttonAutoGraph_Click(object sender, EventArgs e)
+        {
+            graph.GenerateEdges();
+            _TableFill();
+            dataGridView1.Update();
         }
     }
 }

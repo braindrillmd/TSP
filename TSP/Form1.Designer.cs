@@ -58,6 +58,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxGenerationCap = new System.Windows.Forms.TextBox();
+            this.textBoxIterations = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.buttonAutoGraph = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -220,7 +223,7 @@
             this.groupBox5.Controls.Add(this.buttonLoadImage);
             this.groupBox5.Controls.Add(this.buttonRandomMode);
             this.groupBox5.Controls.Add(this.buttonMapMode);
-            this.groupBox5.Location = new System.Drawing.Point(545, 13);
+            this.groupBox5.Location = new System.Drawing.Point(639, 13);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(172, 99);
             this.groupBox5.TabIndex = 20;
@@ -302,14 +305,16 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.label7);
+            this.groupBox4.Controls.Add(this.textBoxIterations);
             this.groupBox4.Controls.Add(this.textBoxGenerationCap);
             this.groupBox4.Controls.Add(this.label6);
             this.groupBox4.Controls.Add(this.label2);
             this.groupBox4.Controls.Add(this.textBoxGAThredsNum);
             this.groupBox4.Controls.Add(this.buttonGARun);
-            this.groupBox4.Location = new System.Drawing.Point(364, 12);
+            this.groupBox4.Location = new System.Drawing.Point(359, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(175, 99);
+            this.groupBox4.Size = new System.Drawing.Size(274, 100);
             this.groupBox4.TabIndex = 23;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "GA";
@@ -346,9 +351,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(87, 45);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(86, 13);
+            this.label6.Size = new System.Drawing.Size(83, 13);
             this.label6.TabIndex = 3;
-            this.label6.Text = "Generation cap.:";
+            this.label6.Text = "Generation cap:";
             // 
             // textBoxGenerationCap
             // 
@@ -357,11 +362,38 @@
             this.textBoxGenerationCap.Size = new System.Drawing.Size(75, 20);
             this.textBoxGenerationCap.TabIndex = 4;
             // 
+            // textBoxIterations
+            // 
+            this.textBoxIterations.Location = new System.Drawing.Point(168, 61);
+            this.textBoxIterations.Name = "textBoxIterations";
+            this.textBoxIterations.Size = new System.Drawing.Size(75, 20);
+            this.textBoxIterations.TabIndex = 5;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(168, 46);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(59, 13);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Interations:";
+            // 
+            // buttonAutoGraph
+            // 
+            this.buttonAutoGraph.Location = new System.Drawing.Point(1177, 652);
+            this.buttonAutoGraph.Name = "buttonAutoGraph";
+            this.buttonAutoGraph.Size = new System.Drawing.Size(75, 23);
+            this.buttonAutoGraph.TabIndex = 24;
+            this.buttonAutoGraph.Text = "Auto";
+            this.buttonAutoGraph.UseVisualStyleBackColor = true;
+            this.buttonAutoGraph.Click += new System.EventHandler(this.buttonAutoGraph_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1348, 687);
+            this.Controls.Add(this.buttonAutoGraph);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.buttonApply);
             this.Controls.Add(this.dataGridView1);
@@ -423,6 +455,9 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBoxGAThredsNum;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxIterations;
+        private System.Windows.Forms.Button buttonAutoGraph;
     }
 }
 

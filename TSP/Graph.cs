@@ -10,6 +10,8 @@ enum CurrentDonor { FIRST, SECOND };
 
 public class Chromosome : WUGraphPath
 {
+    int pathWeight;
+
     public Chromosome(int length) : base(length){ }
 
     public Chromosome Crossingover(Chromosome that)
@@ -85,64 +87,6 @@ public class Chromosome : WUGraphPath
                     count++;
                 }
             }
-
-
-            /*if(this.pathIndexes[currentVertice] == that.pathIndexes[currentVertice])
-            {
-                chromosome.pathIndexes[i] = pathIndexes[currentVertice];
-            }
-            else
-            {
-            //As cryptic as it is
-                if(i % 2 == 1)
-                {
-                    if (!_IsInPath(that, that.pathIndexes[currentVertice], i))
-                    {
-                        currentVertice = chromosome.pathIndexes[currentVertice] = that.pathIndexes[currentVertice];
-                    }
-                    else
-                    {
-                        if(!_IsInPath(this, this.pathIndexes[currentVertice], i))
-                        {
-                            currentVertice = chromosome.pathIndexes[currentVertice] = this.pathIndexes[currentVertice];
-                        }
-                        else
-                        {
-                            int count = 0;
-
-                            while (_IsInPath(that, that.pathIndexes[currentVertice], i) && count < length)
-                            {
-                                currentVertice = _GetNextVerticeIndex(currentVertice, that);
-                                count++;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (!_IsInPath(this, this.pathIndexes[currentVertice], i))
-                    {
-                        currentVertice = chromosome.pathIndexes[currentVertice] = this.pathIndexes[currentVertice];
-                    }
-                    else
-                    {
-                        if (!_IsInPath(that, that.pathIndexes[currentVertice], i))
-                        {
-                            currentVertice = chromosome.pathIndexes[currentVertice] = that.pathIndexes[currentVertice];
-                        }
-                        else
-                        {
-                            int count = 0;
-
-                            while (_IsInPath(this, this.pathIndexes[currentVertice], i) && count < length)
-                            {
-                                currentVertice = _GetNextVerticeIndex(currentVertice, this);
-                                count++;
-                            }
-                        }
-                    }
-                }
-            }*/
         }
 
         return chromosome;
@@ -213,6 +157,172 @@ public class Chromosome : WUGraphPath
         return chromosome;
     }
 }//class Chromosome
+
+class Comparer : IComparer<Individual>
+{
+    public int Compare(Individual x, Individual y)
+    {
+        return y.GetWeight() - x.GetWeight();
+    }
+}
+
+class Generation
+{
+    private int capacity;
+    private int size;
+    private Individual[] generation;
+    private WUGraph graph;
+    private Random random;
+
+    private double crossingOverProbablity;
+    private double mutationProbability; 
+
+    public Generation(int capacity, WUGraph graph)
+    {
+        this.capacity = capacity;
+        size = 0;
+        generation = new Individual[capacity];
+        this.graph = graph;
+        random = new Random();
+
+        crossingOverProbablity = 0.8;
+        mutationProbability = 0.1;
+    }
+
+    public Chromosome GetBest()
+    {
+        return generation[0].GetChromosome();
+    }
+    
+    public void Initialize()
+    {
+        for(int  i = 0; i < capacity; i++)
+        {
+            generation[i] = new Individual(graph.GetVerticesNumber());
+            generation[i].SetChromosomeRandom();
+            generation[i].SetWeight(graph.PathWeight(generation[i].GetChromosome()));
+            size++;
+
+        }
+
+        _SortGeneration();
+    }
+
+    private void _IndividualAdd(Chromosome chromosome)
+    {
+        if(size <= capacity)
+        {
+            size++;
+            generation[size - 1] = new Individual(graph.GetVerticesNumber());
+            generation[size - 1].SetChromosome(chromosome);
+            generation[size - 1].SetWeight(graph.PathWeight(chromosome));
+        }
+    }
+
+    private bool _IsRoom()
+    {
+        if(capacity - size > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public Generation NextGeneration()
+    {
+        Generation newGeneration = new Generation(capacity, graph);
+        //newGeneration = this;
+
+        //MessageBox.Show(_IsRoom().ToString());
+
+        for (int i = 0; i < capacity - 1 && newGeneration._IsRoom(); )
+        {
+            int operation = random.Next(100);
+
+            if(operation <= mutationProbability)
+            {
+                newGeneration._IndividualAdd(this.generation[i].GetChromosome().Mutate());
+                i++;
+                break;
+            }
+            if(operation <= crossingOverProbablity)
+            {
+                newGeneration._IndividualAdd(this.generation[i].GetChromosome().Crossingover(this.generation[i + 1].GetChromosome()));
+                newGeneration._IndividualAdd(this.generation[i + 1].GetChromosome().Crossingover(this.generation[i].GetChromosome()));
+                i += 2;
+                break;
+            }
+        }
+
+        for (int i = 0; i < capacity && newGeneration._IsRoom(); i++)
+        {
+            newGeneration._IndividualAdd(this.generation[i].GetChromosome());
+        }
+
+        _SortGeneration();
+
+        return newGeneration;
+    }
+
+    void _SortGeneration()
+    {
+        Comparer comparer = new Comparer();
+        Array.Sort(generation, comparer);
+    }
+
+}//class Generation
+
+class Individual
+{
+    private Chromosome chromosome;
+    int weight;
+
+    public Individual(int length)
+    {
+        chromosome = new Chromosome(length);
+        weight = 0;
+    }
+
+    public Individual(Chromosome chromosome, int weight)
+    {
+        this.chromosome = chromosome;
+        this.weight = weight;
+    }
+
+    public Chromosome GetChromosome()
+    {
+        return chromosome;
+    }
+
+    public int GetWeight()
+    {
+        return weight;
+    }
+
+    public int Fitness()
+    {
+        return 1 / (weight + 1);
+    }
+
+    public void SetChromosome(Chromosome chromosome)
+    {
+        this.chromosome = chromosome;
+    }
+
+    public void SetChromosomeRandom()
+    {
+        chromosome.GenerateRandomPath();
+    }
+
+    public void SetWeight(int weight)
+    {
+        this.weight = weight;
+    }
+    
+}//class Individual
 
 public static class Randomizer
 {
@@ -404,7 +514,7 @@ public class WUGraph
 
         int x = vertices.ElementAt(path.GetPath()[0]).GetX();
         int y = vertices.ElementAt(path.GetPath()[0]).GetY();
-        canvas.FillEllipse(Brushes.Blue, x - 5, y - 5, 10, 10);
+        canvas.FillEllipse(Brushes.Black, x - 5, y - 5, 10, 10);
         canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);
 
         for (i = 0; i < path.GetLength() - 1; i++)
@@ -503,6 +613,24 @@ public class WUGraph
     public int GetVerticesNumber()
     {
         return vertices.Count;
+    }
+
+    public void GenerateEdges()
+    {
+        edges.Clear();
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            for (int j = 0; j < vertices.Count; j++)
+            {
+                int xI = vertices.ElementAt(i).GetX();
+                int xJ = vertices.ElementAt(j).GetX();
+                int yI = vertices.ElementAt(i).GetY();
+                int yJ = vertices.ElementAt(j).GetY();
+
+                edges.Add(new WUGraphEdge(i, j, (int)Math.Round(Math.Sqrt((xI - xJ) * (xI - xJ) + (yI - yJ) * (yI - yJ)))));
+            }
+        }
     }
 
     public void GenerateRandom(int size)
