@@ -33,8 +33,6 @@
             this.drawPathButton = new System.Windows.Forms.Button();
             this.pathWeightTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.beginFromTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -56,6 +54,10 @@
             this.buttonApply = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.buttonGARun = new System.Windows.Forms.Button();
+            this.textBoxGAThredsNum = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBoxGenerationCap = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -112,23 +114,6 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "Vertices:";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(84, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Starting point:";
-            // 
-            // beginFromTextBox
-            // 
-            this.beginFromTextBox.Location = new System.Drawing.Point(87, 61);
-            this.beginFromTextBox.Name = "beginFromTextBox";
-            this.beginFromTextBox.Size = new System.Drawing.Size(75, 20);
-            this.beginFromTextBox.TabIndex = 6;
-            this.beginFromTextBox.TextChanged += new System.EventHandler(this.beginFromTextBox_TextChanged);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -140,9 +125,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.generateButton);
-            this.groupBox1.Controls.Add(this.beginFromTextBox);
             this.groupBox1.Controls.Add(this.drawPathButton);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.verticesNumTextBox);
@@ -237,7 +220,7 @@
             this.groupBox5.Controls.Add(this.buttonLoadImage);
             this.groupBox5.Controls.Add(this.buttonRandomMode);
             this.groupBox5.Controls.Add(this.buttonMapMode);
-            this.groupBox5.Location = new System.Drawing.Point(538, 13);
+            this.groupBox5.Location = new System.Drawing.Point(545, 13);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(172, 99);
             this.groupBox5.TabIndex = 20;
@@ -319,10 +302,14 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.textBoxGenerationCap);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Controls.Add(this.label2);
+            this.groupBox4.Controls.Add(this.textBoxGAThredsNum);
             this.groupBox4.Controls.Add(this.buttonGARun);
             this.groupBox4.Location = new System.Drawing.Point(364, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(168, 99);
+            this.groupBox4.Size = new System.Drawing.Size(175, 99);
             this.groupBox4.TabIndex = 23;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "GA";
@@ -337,6 +324,38 @@
             this.buttonGARun.Text = "Run";
             this.buttonGARun.UseVisualStyleBackColor = true;
             this.buttonGARun.Click += new System.EventHandler(this.buttonGARun_Click);
+            // 
+            // textBoxGAThredsNum
+            // 
+            this.textBoxGAThredsNum.Location = new System.Drawing.Point(6, 61);
+            this.textBoxGAThredsNum.Name = "textBoxGAThredsNum";
+            this.textBoxGAThredsNum.Size = new System.Drawing.Size(75, 20);
+            this.textBoxGAThredsNum.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 45);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Threads:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(87, 45);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(86, 13);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "Generation cap.:";
+            // 
+            // textBoxGenerationCap
+            // 
+            this.textBoxGenerationCap.Location = new System.Drawing.Point(87, 61);
+            this.textBoxGenerationCap.Name = "textBoxGenerationCap";
+            this.textBoxGenerationCap.Size = new System.Drawing.Size(75, 20);
+            this.textBoxGenerationCap.TabIndex = 4;
             // 
             // MainForm
             // 
@@ -366,6 +385,7 @@
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -378,8 +398,6 @@
         private System.Windows.Forms.Button drawPathButton;
         private System.Windows.Forms.TextBox pathWeightTextBox;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox beginFromTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -401,6 +419,10 @@
         private System.Windows.Forms.Button buttonMapMode;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button buttonGARun;
+        private System.Windows.Forms.TextBox textBoxGenerationCap;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxGAThredsNum;
     }
 }
 

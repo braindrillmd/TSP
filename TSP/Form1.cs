@@ -58,13 +58,16 @@ namespace TSP
             dataGridView1.Refresh();
             _TableFill();
             dataGridView1.Update();
+            buttonGARun.Enabled = true;
+            drawPathButton.Enabled = true;
+            mCBEbutton.Enabled = true;
         }
 
         private void drawPathButton_Click(object sender, EventArgs e)
         {
             
             WUGraphPath path = new WUGraphPath(Convert.ToInt32(graph.GetVerticesNumber()));
-            path.GenerateRandomPathFrom(Convert.ToInt32(beginFromTextBox.Lines[0]));
+            path.GenerateRandomPath();
 
             canvas.Clear(SystemColors.Control);
 
@@ -81,8 +84,7 @@ namespace TSP
         private void mCBEbutton_Click(object sender, EventArgs e)
         {
             WUGraphPath path = graph.MCE(Convert.ToInt32(threadsTextBox.Lines[0]),
-                                         Convert.ToInt32(experimentsTextBox.Lines[0]),
-                                         Convert.ToInt32(beginFromTextBox.Lines[0]));
+                                         Convert.ToInt32(experimentsTextBox.Lines[0]));
             if (mode == Mode.RANDOM)
             {
                 pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
@@ -148,24 +150,6 @@ namespace TSP
             buttonLoadImage.Enabled = false;
         }
 
-        private void beginFromTextBox_TextChanged(object sender, EventArgs e)
-        {
-            int i;
-
-            if (int.TryParse(beginFromTextBox.Text, out i))
-            {
-                mCBEbutton.Enabled = true;
-                drawPathButton.Enabled = true;
-                buttonGARun.Enabled = true;
-            }
-            else
-            {
-                mCBEbutton.Enabled = false;
-                drawPathButton.Enabled = false;
-                buttonGARun.Enabled = false;
-            }
-        }
-
         private void verticesNumTextBox_TextChanged(object sender, EventArgs e)
         {
             int i;
@@ -189,8 +173,11 @@ namespace TSP
             Chromosome path = path1.Crossingover(path2);
 
             if (mode == Mode.RANDOM)
-            { 
-                pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
+            {
+                //pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
+                //MessageBox.Show("Child!");
+
+                pathWeightTextBox.Text = (graph.DrawPath(path.Mutate(), bitmapCanvas, canvasPictureBox).ToString());
             }
             else
             {

@@ -173,6 +173,45 @@ public class Chromosome : WUGraphPath
 
         return false;
     }
+
+    public Chromosome Mutate()
+    {
+        Chromosome chromosome = new Chromosome(length);
+        chromosome.CopyPath(this);
+
+        if (length < 5)
+        {
+            return chromosome;
+        }
+        else
+        {
+            Random r = new Random();
+
+            int mutatingGeneIndex = r.Next(length - 2) + 1;
+
+            int insertionIndex = r.Next(length - 2) + 1;
+            while (insertionIndex <= mutatingGeneIndex + 1 && insertionIndex >= mutatingGeneIndex - 1)
+            {
+                insertionIndex = r.Next(length - 2) + 1;
+            }
+
+            int geneBeforeMutatedIndex = 0;
+            for(int i = 0; i < length; i++)
+            {
+                if(chromosome.pathIndexes[i] == mutatingGeneIndex)
+                {
+                    geneBeforeMutatedIndex = i;
+                }
+            }
+
+            chromosome.pathIndexes[geneBeforeMutatedIndex] = chromosome.pathIndexes[mutatingGeneIndex];
+
+            chromosome.pathIndexes[mutatingGeneIndex] =  chromosome.pathIndexes[insertionIndex];
+            chromosome.pathIndexes[insertionIndex] = mutatingGeneIndex;
+        }
+
+        return chromosome;
+    }
 }//class Chromosome
 
 public static class Randomizer
@@ -289,7 +328,7 @@ public class WUGraph
 
         int x = vertices.ElementAt(path.GetPath()[0]).GetX();
         int y = vertices.ElementAt(path.GetPath()[0]).GetY();
-        canvas.FillEllipse(Brushes.Blue, x - 5, y - 5, 10, 10);
+        canvas.FillEllipse(Brushes.Black, x - 5, y - 5, 10, 10);
         canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);
 
         for (i = 0; i < path.GetLength() - 1; i++)
@@ -512,7 +551,7 @@ public class WUGraph
         return pathWeight;
     }
 
-    public WUGraphPath MCE(int threadsNumber, int repitations, int from)
+    public WUGraphPath MCE(int threadsNumber, int repitations)
     {
         if (sequence != null)
         {
@@ -526,7 +565,6 @@ public class WUGraph
         }
         Thread[] threads = new Thread[threadsNumber];
         MCESequencRepetitions = repitations;
-        MCEStartingPoint = from;
 
         for (int i = 0; i < threadsNumber; i++)
         {
@@ -559,7 +597,7 @@ public class WUGraph
     private void MCESingle(object n) //MCE routine
     {
         WUGraphPath minPath = new WUGraphPath(vertices.Count);
-        minPath.GenerateRandomPathFrom(MCEStartingPoint);
+        minPath.GenerateRandomPath();
         int minPathWeight = PathWeight(minPath);
         sequence[(int)n].path.CopyPath(minPath);
         sequence[(int)n].pathWeight = minPathWeight;
@@ -661,7 +699,6 @@ public class WUGraphPath
         return pathIndexes;
     }
 
-    //Do I really need this one?
     public void GenerateRandomPath()
     {
         List<int> list = new List<int>();
