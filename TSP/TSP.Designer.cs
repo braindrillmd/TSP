@@ -53,14 +53,19 @@
             this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonApply = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.buttonGARun = new System.Windows.Forms.Button();
-            this.textBoxGAThredsNum = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.textBoxGenerationCap = new System.Windows.Forms.TextBox();
-            this.textBoxIterations = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.textBoxIterations = new System.Windows.Forms.TextBox();
+            this.textBoxGenerationCap = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxGAThredsNum = new System.Windows.Forms.TextBox();
+            this.buttonGARun = new System.Windows.Forms.Button();
             this.buttonAutoGraph = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBoxTime = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBoxEAW = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -122,12 +127,13 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(6, 16);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(115, 13);
+            this.label3.Size = new System.Drawing.Size(110, 13);
             this.label3.TabIndex = 7;
-            this.label3.Text = "Path Summary Weight:";
+            this.label3.Text = "Path summary weight:";
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.generateButton);
             this.groupBox1.Controls.Add(this.drawPathButton);
             this.groupBox1.Controls.Add(this.label1);
@@ -142,6 +148,10 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox2.Controls.Add(this.textBoxEAW);
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Controls.Add(this.textBoxTime);
+            this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.pathWeightTextBox);
             this.groupBox2.Location = new System.Drawing.Point(5, 635);
@@ -319,6 +329,54 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "GA";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(168, 46);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(59, 13);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Interations:";
+            // 
+            // textBoxIterations
+            // 
+            this.textBoxIterations.Location = new System.Drawing.Point(168, 61);
+            this.textBoxIterations.Name = "textBoxIterations";
+            this.textBoxIterations.Size = new System.Drawing.Size(75, 20);
+            this.textBoxIterations.TabIndex = 5;
+            // 
+            // textBoxGenerationCap
+            // 
+            this.textBoxGenerationCap.Location = new System.Drawing.Point(87, 61);
+            this.textBoxGenerationCap.Name = "textBoxGenerationCap";
+            this.textBoxGenerationCap.Size = new System.Drawing.Size(75, 20);
+            this.textBoxGenerationCap.TabIndex = 4;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(87, 45);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(83, 13);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "Generation cap:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 45);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Threads:";
+            // 
+            // textBoxGAThredsNum
+            // 
+            this.textBoxGAThredsNum.Location = new System.Drawing.Point(6, 61);
+            this.textBoxGAThredsNum.Name = "textBoxGAThredsNum";
+            this.textBoxGAThredsNum.Size = new System.Drawing.Size(75, 20);
+            this.textBoxGAThredsNum.TabIndex = 1;
+            // 
             // buttonGARun
             // 
             this.buttonGARun.Enabled = false;
@@ -330,54 +388,6 @@
             this.buttonGARun.UseVisualStyleBackColor = true;
             this.buttonGARun.Click += new System.EventHandler(this.buttonGARun_Click);
             // 
-            // textBoxGAThredsNum
-            // 
-            this.textBoxGAThredsNum.Location = new System.Drawing.Point(6, 61);
-            this.textBoxGAThredsNum.Name = "textBoxGAThredsNum";
-            this.textBoxGAThredsNum.Size = new System.Drawing.Size(75, 20);
-            this.textBoxGAThredsNum.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Threads:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(87, 45);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(83, 13);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Generation cap:";
-            // 
-            // textBoxGenerationCap
-            // 
-            this.textBoxGenerationCap.Location = new System.Drawing.Point(87, 61);
-            this.textBoxGenerationCap.Name = "textBoxGenerationCap";
-            this.textBoxGenerationCap.Size = new System.Drawing.Size(75, 20);
-            this.textBoxGenerationCap.TabIndex = 4;
-            // 
-            // textBoxIterations
-            // 
-            this.textBoxIterations.Location = new System.Drawing.Point(168, 61);
-            this.textBoxIterations.Name = "textBoxIterations";
-            this.textBoxIterations.Size = new System.Drawing.Size(75, 20);
-            this.textBoxIterations.TabIndex = 5;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(168, 46);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(59, 13);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Interations:";
-            // 
             // buttonAutoGraph
             // 
             this.buttonAutoGraph.Location = new System.Drawing.Point(1177, 652);
@@ -387,6 +397,50 @@
             this.buttonAutoGraph.Text = "Auto";
             this.buttonAutoGraph.UseVisualStyleBackColor = true;
             this.buttonAutoGraph.Click += new System.EventHandler(this.buttonAutoGraph_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(208, 16);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(33, 13);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "Time:";
+            // 
+            // textBoxTime
+            // 
+            this.textBoxTime.Location = new System.Drawing.Point(247, 13);
+            this.textBoxTime.Name = "textBoxTime";
+            this.textBoxTime.ReadOnly = true;
+            this.textBoxTime.Size = new System.Drawing.Size(75, 20);
+            this.textBoxTime.TabIndex = 9;
+            // 
+            // buttonEAW
+            // 
+            this.button1.Location = new System.Drawing.Point(87, 59);
+            this.button1.Name = "buttonEAW";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 25;
+            this.button1.Text = "EAW";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.buttonEAW_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(328, 17);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(128, 13);
+            this.label9.TabIndex = 10;
+            this.label9.Text = "Expected average weight";
+            // 
+            // textBoxEAW
+            // 
+            this.textBoxEAW.Location = new System.Drawing.Point(462, 14);
+            this.textBoxEAW.Name = "textBoxEAW";
+            this.textBoxEAW.ReadOnly = true;
+            this.textBoxEAW.Size = new System.Drawing.Size(100, 20);
+            this.textBoxEAW.TabIndex = 11;
             // 
             // MainForm
             // 
@@ -458,6 +512,11 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBoxIterations;
         private System.Windows.Forms.Button buttonAutoGraph;
+        private System.Windows.Forms.TextBox textBoxTime;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBoxEAW;
+        private System.Windows.Forms.Label label9;
     }
 }
 

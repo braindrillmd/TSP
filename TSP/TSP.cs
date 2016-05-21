@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -51,7 +52,7 @@ namespace TSP
 
         private void drawButton_Click(object sender, EventArgs e)
         {
-            graph.GenerateRandom(Convert.ToInt32(verticesNumTextBox.Lines[0]));
+            graph.GenerateRandom(Convert.ToInt16(verticesNumTextBox.Lines[0]));
             
             graph.Draw(bitmapCanvas, canvasPictureBox);
             pathWeightTextBox.Text = "";
@@ -84,8 +85,16 @@ namespace TSP
 
         private void mCBEbutton_Click(object sender, EventArgs e)
         {
-            WUGraphPath path = graph.MCE(Convert.ToInt32(threadsTextBox.Lines[0]),
-                                         Convert.ToInt32(experimentsTextBox.Lines[0]));
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            WUGraphPath path = graph.MCE(Convert.ToInt32(threadsTextBox.Text),
+                                         Convert.ToInt32(experimentsTextBox.Text));
+
+            stopwatch.Stop();
+
+            textBoxTime.Text = stopwatch.ElapsedMilliseconds.ToString();
+
+
             if (mode == Mode.RANDOM)
             {
                 pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
@@ -94,6 +103,8 @@ namespace TSP
             {
                 pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, new Bitmap(map), canvasPictureBox).ToString());
             }
+
+            
         }
 
         private void buttonApply_Click(object sender, EventArgs e)
@@ -174,25 +185,27 @@ namespace TSP
 
         private void buttonGARun_Click(object sender, EventArgs e)
         {
-            Chromosome path1 = new Chromosome(graph.GetVerticesNumber());
-            Chromosome path2 = new Chromosome(Convert.ToInt16(verticesNumTextBox.Text));
-            path1.GenerateRandomPath();
-            path2.GenerateRandomPath();
-            Chromosome path = path1.Crossingover(path2);
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             if (mode == Mode.RANDOM)
             {
-                Generation generation = new Generation(100, graph);
-                generation.Initialize();
-                pathWeightTextBox.Text = (graph.DrawPath(generation.GetBest(), bitmapCanvas, canvasPictureBox).ToString());
-                MessageBox.Show("Next");
-
-                pathWeightTextBox.Text = (graph.DrawPath(generation.NextGeneration().GetBest() , bitmapCanvas, canvasPictureBox).ToString());
+                pathWeightTextBox.Text = (graph.DrawPath(graph.GA(Convert.ToInt16(textBoxGAThredsNum.Text),
+                                                                  Convert.ToInt16(textBoxGenerationCap.Text),
+                                                                  Convert.ToInt16(textBoxIterations.Text)),
+                                                                  bitmapCanvas,
+                                                                  canvasPictureBox).ToString());
             }
             else
             {
-                pathWeightTextBox.Text = (graph.DrawPathOnMap(path, canvas, new Bitmap(map), canvasPictureBox).ToString());
+                pathWeightTextBox.Text = (graph.DrawPathOnMap(graph.GA(Convert.ToInt16(textBoxGAThredsNum.Text),
+                                                                  Convert.ToInt16(textBoxGenerationCap.Text),
+                                                                  Convert.ToInt16(textBoxIterations.Text)),
+                                                                  canvas, new Bitmap(map), canvasPictureBox).ToString());
             }
+
+            stopwatch.Stop();
+
+            textBoxTime.Text = stopwatch.ElapsedMilliseconds.ToString();
         }
 
         private void buttonAutoGraph_Click(object sender, EventArgs e)
@@ -200,6 +213,11 @@ namespace TSP
             graph.GenerateEdges();
             _TableFill();
             dataGridView1.Update();
+        }
+
+        private void buttonEAW_Click(object sender, EventArgs e)
+        {
+            textBoxEAW.Text = graph.GetEAW().ToString();
         }
     }
 }

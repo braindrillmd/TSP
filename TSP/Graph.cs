@@ -14,6 +14,8 @@ public class Chromosome : WUGraphPath
 
     public Chromosome(int length) : base(length){ }
 
+    
+
     public Chromosome Crossingover(Chromosome that)
     {
         Chromosome chromosome = new Chromosome(length);
@@ -162,7 +164,15 @@ class Comparer : IComparer<Individual>
 {
     public int Compare(Individual x, Individual y)
     {
-        return y.GetWeight() - x.GetWeight();
+        return x.GetWeight() - y.GetWeight();
+    }
+}
+
+public class EdgeComparer : IComparer<WUGraphEdge>
+{
+    public int Compare(WUGraphEdge x, WUGraphEdge y)
+    {
+        return x.GetWeight() - y.GetWeight();
     }
 }
 
@@ -231,7 +241,7 @@ class Generation
         }
     }
 
-    public Generation NextGeneration()
+    public void NextGeneration()
     {
         Generation newGeneration = new Generation(capacity, graph);
         //newGeneration = this;
@@ -262,15 +272,23 @@ class Generation
             newGeneration._IndividualAdd(this.generation[i].GetChromosome());
         }
 
-        _SortGeneration();
+        newGeneration._SortGeneration();
 
-        return newGeneration;
+        for(int i = 0; i < capacity; i++)
+        {
+            this.generation[i].GetChromosome().CopyPath(newGeneration.generation[i].GetChromosome());
+            this.generation[i].SetWeight(newGeneration.generation[i].GetWeight());
+        }
+
+        //return newGeneration;
     }
 
     void _SortGeneration()
     {
         Comparer comparer = new Comparer();
         Array.Sort(generation, comparer);
+
+        //MessageBox.Show(generation[0].GetWeight().ToString() + " " + generation[1].GetWeight().ToString() + " " + generation[2].GetWeight().ToString());
     }
 
 }//class Generation
@@ -300,11 +318,6 @@ class Individual
     public int GetWeight()
     {
         return weight;
-    }
-
-    public int Fitness()
-    {
-        return 1 / (weight + 1);
     }
 
     public void SetChromosome(Chromosome chromosome)
@@ -342,17 +355,21 @@ public class WUGraph
 {
     List<WUGraphVertice> vertices;
     List<WUGraphEdge> edges;
+    
 
-    class MCESequence
+    class ExperimentSequence
     {
         public WUGraphPath path;
         public int pathWeight;
     }
 
+    int GASequenceRepetitions;
     int MCESequencRepetitions;
-    int MCEStartingPoint;
 
-    MCESequence[] sequence;
+    int GACapacity;
+
+    ExperimentSequence[] MCESequence;
+    ExperimentSequence[] GASequence;
 
     public WUGraph()
     {
@@ -579,6 +596,74 @@ public class WUGraph
         return null;
     }
 
+    public WUGraphPath GA(int threadsNum, int generationCap, int iterations)
+    {
+        GASequenceRepetitions = iterations;
+        GACapacity = generationCap;
+        GASequence = new ExperimentSequence[generationCap];
+        for (int i = 0; i < threadsNum; i++)
+        {
+            GASequence[i] = new ExperimentSequence();
+            GASequence[i].path = new WUGraphPath(vertices.Count);
+        }
+
+        Thread[] threads = new Thread[threadsNum];
+
+        for (int i = 0; i < threadsNum; i++)
+        {
+            threads[i] = new Thread(new ParameterizedThreadStart(_GARoutine));
+            threads[i].Start(i);
+        }
+
+        for (int i = 0; i < threadsNum; i++)
+        {
+            threads[i].Join();
+        }
+
+        //MessageBox.Show("<" + GASequence[0].pathWeight.ToString() + " " + GASequence[1].pathWeight.ToString() + " " + GASequence[2].pathWeight.ToString() + ">");
+
+        int minWeight = GASequence[0].pathWeight;
+        int minPathIndex = 0;
+        for (int i = 1; i < threadsNum; i++)
+        {
+            if (GASequence[i].pathWeight < minWeight && GASequence[i].pathWeight >= 0)
+            {
+                minWeight = GASequence[i].pathWeight;
+                minPathIndex = i;
+            }
+        }
+
+        return GASequence[minPathIndex].path;
+    }
+
+    private void _GARoutine(object n)
+    {
+        Generation generation = new Generation(GACapacity, this);
+        generation.Initialize();
+
+        for (int i = 1; i < GASequenceRepetitions; i++)
+        {
+            generation.NextGeneration();
+            //MessageBox.Show(n.ToString() + "/" + i.ToString() + ": " + PathWeight(generation.GetBest()).ToString());
+        }
+
+        GASequence[(int)n].path.CopyPath(generation.GetBest());
+        GASequence[(int)n].pathWeight = PathWeight(generation.GetBest());
+    }
+
+    public int GetEAW()
+    {
+        EdgeComparer comparer = new EdgeComparer();
+
+        edges.Sort(comparer);
+
+        List<WUGraphEdge> temp = new List<WUGraphEdge>(edges);
+
+        int result = (temp.ElementAt(0).GetWeight() + temp.ElementAt(edges.Count - 1).GetWeight()) / 2 * vertices.Count();
+
+        return result;
+    }
+
     public int GetEdgesNumber()
     {
         return edges.Count;
@@ -681,15 +766,15 @@ public class WUGraph
 
     public WUGraphPath MCE(int threadsNumber, int repitations)
     {
-        if (sequence != null)
+        /*if (MCESequence != null)
         {
-            Array.Clear(sequence, 0, sequence.Length);
-        }
-        sequence = new MCESequence[threadsNumber];
+            Array.Clear(MCESequence, 0, MCESequence.Length);
+        }*/
+        MCESequence = new ExperimentSequence[threadsNumber];
         for (int i = 0; i < threadsNumber; i++)
         {
-            sequence[i] = new MCESequence();
-            sequence[i].path = new WUGraphPath(vertices.Count);
+            MCESequence[i] = new ExperimentSequence();
+            MCESequence[i].path = new WUGraphPath(vertices.Count);
         }
         Thread[] threads = new Thread[threadsNumber];
         MCESequencRepetitions = repitations;
@@ -704,22 +789,22 @@ public class WUGraph
         {
             threads[i].Join();
         }
-        Array.Clear(threads, 0, threadsNumber);
+        //Array.Clear(threads, 0, threadsNumber);
 
-        int minWeight = sequence[0].pathWeight;
+        int minWeight = MCESequence[0].pathWeight;
         int minPathIndex = 0;
-        for (int i = 1; i < threadsNumber; i++)
+        for (int i = 0; i < threadsNumber; i++)
         {
-            if (sequence[i].pathWeight < minWeight && sequence[i].pathWeight >= 0)
+            if (MCESequence[i].pathWeight < minWeight && MCESequence[i].pathWeight >= 0)
             {
-                minWeight = sequence[i].pathWeight;
+                minWeight = MCESequence[i].pathWeight;
                 minPathIndex = i;
             }
         }
 
-        WUGraphPath result = new WUGraphPath(vertices.Count);
-        result.CopyPath(sequence[minPathIndex].path);
-        return result;
+        //WUGraphPath result = new WUGraphPath(vertices.Count);
+        //result.CopyPath(MCESequence[minPathIndex].path);
+        return MCESequence[minPathIndex].path;
     }
 
     private void MCESingle(object n) //MCE routine
@@ -727,19 +812,19 @@ public class WUGraph
         WUGraphPath minPath = new WUGraphPath(vertices.Count);
         minPath.GenerateRandomPath();
         int minPathWeight = PathWeight(minPath);
-        sequence[(int)n].path.CopyPath(minPath);
-        sequence[(int)n].pathWeight = minPathWeight;
+        MCESequence[(int)n].path.CopyPath(minPath);
+        MCESequence[(int)n].pathWeight = minPathWeight;
 
-        for (int i = 1; i < MCESequencRepetitions; i++)
+        for (int i = 0; i < MCESequencRepetitions; i++)
         {
             WUGraphPath currentPath = new WUGraphPath(vertices.Count);
-            currentPath.GenerateRandomPathFrom(MCEStartingPoint);
+            currentPath.GenerateRandomPath();
             int currentPathWeight = PathWeight(currentPath);
 
             if (minPathWeight > currentPathWeight)
             {
-                sequence[(int)n].path.CopyPath(currentPath);
-                sequence[(int)n].pathWeight = currentPathWeight;
+                MCESequence[(int)n].path.CopyPath(currentPath);
+                MCESequence[(int)n].pathWeight = currentPathWeight;
                 minPathWeight = currentPathWeight;
             }
         }
