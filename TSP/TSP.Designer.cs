@@ -35,7 +35,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBoxEAW = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBoxTime = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.mCBEbutton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -44,6 +49,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.canvasPictureBox = new System.Windows.Forms.PictureBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.textBoxAverage = new System.Windows.Forms.TextBox();
+            this.buttonAverageEnable = new System.Windows.Forms.Button();
             this.buttonLoadImage = new System.Windows.Forms.Button();
             this.buttonRandomMode = new System.Windows.Forms.Button();
             this.buttonMapMode = new System.Windows.Forms.Button();
@@ -61,11 +68,9 @@
             this.textBoxGAThredsNum = new System.Windows.Forms.TextBox();
             this.buttonGARun = new System.Windows.Forms.Button();
             this.buttonAutoGraph = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
-            this.textBoxTime = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label9 = new System.Windows.Forms.Label();
-            this.textBoxEAW = new System.Windows.Forms.TextBox();
+            this.buttonLoadTable = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -107,7 +112,7 @@
             // 
             // pathWeightTextBox
             // 
-            this.pathWeightTextBox.Location = new System.Drawing.Point(127, 13);
+            this.pathWeightTextBox.Location = new System.Drawing.Point(9, 32);
             this.pathWeightTextBox.Name = "pathWeightTextBox";
             this.pathWeightTextBox.ReadOnly = true;
             this.pathWeightTextBox.Size = new System.Drawing.Size(75, 20);
@@ -145,21 +150,65 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Graph control";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(87, 59);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 25;
+            this.button1.Text = "EAW";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.buttonEAW_Click);
+            // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox2.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.groupBox2.Controls.Add(this.textBoxEAW);
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.textBoxTime);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.pathWeightTextBox);
-            this.groupBox2.Location = new System.Drawing.Point(5, 635);
+            this.groupBox2.Location = new System.Drawing.Point(909, 13);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(767, 40);
+            this.groupBox2.Size = new System.Drawing.Size(212, 99);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
+            // 
+            // textBoxEAW
+            // 
+            this.textBoxEAW.Location = new System.Drawing.Point(9, 71);
+            this.textBoxEAW.Name = "textBoxEAW";
+            this.textBoxEAW.ReadOnly = true;
+            this.textBoxEAW.Size = new System.Drawing.Size(75, 20);
+            this.textBoxEAW.TabIndex = 11;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(7, 55);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(128, 13);
+            this.label9.TabIndex = 10;
+            this.label9.Text = "Expected average weight";
+            // 
+            // textBoxTime
+            // 
+            this.textBoxTime.Location = new System.Drawing.Point(125, 32);
+            this.textBoxTime.Name = "textBoxTime";
+            this.textBoxTime.ReadOnly = true;
+            this.textBoxTime.Size = new System.Drawing.Size(75, 20);
+            this.textBoxTime.TabIndex = 9;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(122, 17);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(33, 13);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "Time:";
             // 
             // mCBEbutton
             // 
@@ -230,15 +279,34 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.textBoxAverage);
+            this.groupBox5.Controls.Add(this.buttonAverageEnable);
             this.groupBox5.Controls.Add(this.buttonLoadImage);
             this.groupBox5.Controls.Add(this.buttonRandomMode);
             this.groupBox5.Controls.Add(this.buttonMapMode);
             this.groupBox5.Location = new System.Drawing.Point(639, 13);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(172, 99);
+            this.groupBox5.Size = new System.Drawing.Size(264, 99);
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Experiment mode";
+            // 
+            // textBoxAverage
+            // 
+            this.textBoxAverage.Location = new System.Drawing.Point(169, 52);
+            this.textBoxAverage.Name = "textBoxAverage";
+            this.textBoxAverage.Size = new System.Drawing.Size(75, 20);
+            this.textBoxAverage.TabIndex = 25;
+            // 
+            // buttonAverageEnable
+            // 
+            this.buttonAverageEnable.Location = new System.Drawing.Point(88, 49);
+            this.buttonAverageEnable.Name = "buttonAverageEnable";
+            this.buttonAverageEnable.Size = new System.Drawing.Size(75, 23);
+            this.buttonAverageEnable.TabIndex = 24;
+            this.buttonAverageEnable.Text = "Average";
+            this.buttonAverageEnable.UseVisualStyleBackColor = true;
+            this.buttonAverageEnable.Click += new System.EventHandler(this.buttonAverageEnable_Click);
             // 
             // buttonLoadImage
             // 
@@ -278,9 +346,9 @@
             this.from,
             this.to,
             this.cost});
-            this.dataGridView1.Location = new System.Drawing.Point(1096, 12);
+            this.dataGridView1.Location = new System.Drawing.Point(1115, 158);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(240, 634);
+            this.dataGridView1.Size = new System.Drawing.Size(221, 488);
             this.dataGridView1.TabIndex = 21;
             // 
             // from
@@ -305,7 +373,7 @@
             // 
             // buttonApply
             // 
-            this.buttonApply.Location = new System.Drawing.Point(1096, 652);
+            this.buttonApply.Location = new System.Drawing.Point(1034, 652);
             this.buttonApply.Name = "buttonApply";
             this.buttonApply.Size = new System.Drawing.Size(75, 23);
             this.buttonApply.TabIndex = 22;
@@ -351,6 +419,7 @@
             this.textBoxGenerationCap.Name = "textBoxGenerationCap";
             this.textBoxGenerationCap.Size = new System.Drawing.Size(75, 20);
             this.textBoxGenerationCap.TabIndex = 4;
+            this.textBoxGenerationCap.TextChanged += new System.EventHandler(this.textBoxGenerationCap_TextChanged);
             // 
             // label6
             // 
@@ -390,7 +459,7 @@
             // 
             // buttonAutoGraph
             // 
-            this.buttonAutoGraph.Location = new System.Drawing.Point(1177, 652);
+            this.buttonAutoGraph.Location = new System.Drawing.Point(1115, 652);
             this.buttonAutoGraph.Name = "buttonAutoGraph";
             this.buttonAutoGraph.Size = new System.Drawing.Size(75, 23);
             this.buttonAutoGraph.TabIndex = 24;
@@ -398,55 +467,44 @@
             this.buttonAutoGraph.UseVisualStyleBackColor = true;
             this.buttonAutoGraph.Click += new System.EventHandler(this.buttonAutoGraph_Click);
             // 
-            // label8
+            // buttonLoadTable
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(208, 16);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(33, 13);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "Time:";
+            this.buttonLoadTable.Location = new System.Drawing.Point(1196, 652);
+            this.buttonLoadTable.Name = "buttonLoadTable";
+            this.buttonLoadTable.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadTable.TabIndex = 25;
+            this.buttonLoadTable.Text = "Load";
+            this.buttonLoadTable.UseVisualStyleBackColor = true;
+            this.buttonLoadTable.Click += new System.EventHandler(this.buttonLoadTable_Click);
             // 
-            // textBoxTime
+            // button2
             // 
-            this.textBoxTime.Location = new System.Drawing.Point(247, 13);
-            this.textBoxTime.Name = "textBoxTime";
-            this.textBoxTime.ReadOnly = true;
-            this.textBoxTime.Size = new System.Drawing.Size(75, 20);
-            this.textBoxTime.TabIndex = 9;
+            this.button2.Location = new System.Drawing.Point(1278, 652);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(21, 23);
+            this.button2.TabIndex = 26;
+            this.button2.Text = "x";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // buttonEAW
+            // button3
             // 
-            this.button1.Location = new System.Drawing.Point(87, 59);
-            this.button1.Name = "buttonEAW";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 25;
-            this.button1.Text = "EAW";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.buttonEAW_Click);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(328, 17);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(128, 13);
-            this.label9.TabIndex = 10;
-            this.label9.Text = "Expected average weight";
-            // 
-            // textBoxEAW
-            // 
-            this.textBoxEAW.Location = new System.Drawing.Point(462, 14);
-            this.textBoxEAW.Name = "textBoxEAW";
-            this.textBoxEAW.ReadOnly = true;
-            this.textBoxEAW.Size = new System.Drawing.Size(100, 20);
-            this.textBoxEAW.TabIndex = 11;
+            this.button3.Location = new System.Drawing.Point(1137, 19);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 27;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1348, 687);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.buttonLoadTable);
             this.Controls.Add(this.buttonAutoGraph);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.buttonApply);
@@ -469,6 +527,7 @@
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasPictureBox)).EndInit();
             this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -517,6 +576,11 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBoxEAW;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox textBoxAverage;
+        private System.Windows.Forms.Button buttonAverageEnable;
+        private System.Windows.Forms.Button buttonLoadTable;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }
 

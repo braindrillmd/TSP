@@ -18,9 +18,132 @@ public class Chromosome : WUGraphPath
 
     public Chromosome Crossingover(Chromosome that)
     {
+        int currentVertice = 0;
+        int currentVerticeOld= 0;
         Chromosome chromosome = new Chromosome(length);
+        for (int i = 0; i < length; i++)
+        {
+            chromosome.pathIndexes[i] = -1;
+        }
+
+        for (int i = 0; i < length; i++)
+        {
+            WUGraphPath donor1 = new WUGraphPath(length);
+            WUGraphPath donor2 = new WUGraphPath(length);
+
+            if (i % 2 == 0)
+            {
+
+                donor1 = this;
+                donor2 = that;
+            }
+            else
+            {
+                donor2 = this;
+                donor1 = that;
+            }
+
+            if (!_IsInPath(chromosome, donor1.pathIndexes[i]) && donor1.pathIndexes[i] != 0)
+            {
+                chromosome.pathIndexes[i] = donor1.pathIndexes[i];
+            }
+            else
+            {
+                if(!_IsInPath(chromosome, donor2.pathIndexes[i]) && donor2.pathIndexes[i] != 0)
+                {
+                    chromosome.pathIndexes[i] = donor2.pathIndexes[i] ;
+                }
+                else
+                {
+                    for(int j = 0; j < length; j++)
+                    {
+                        if (!_IsInPath(chromosome, j))
+                        {
+                            chromosome.pathIndexes[i] = j;
+                        }
+                    }
+                }
+            }
+        }
+        for (int j = 0; j < length; j++)
+        {
+            if (pathIndexes[j] == -1)
+            {
+                pathIndexes[j] = 0;
+            }
+        }
+
+
+        /*for (int i = 0; i < length; i++)
+        {
+            if (i == length-1)
+            {
+                chromosome.pathIndexes[currentVerticeOld] = 0;
+                break;
+            }
+            WUGraphPath donor1 = new WUGraphPath(length);
+            WUGraphPath donor2 = new WUGraphPath(length);
+
+            if (i % 2 == 0)
+            {
+                
+                donor1 = this;
+                donor2 = that;
+            }
+            else
+            {
+                donor2 = this;
+                donor1 = that;
+            }
+            currentVertice = donor1.GetPath()[currentVerticeOld];
+
+            if(_IsInPath(chromosome, currentVertice) || _IsInPath(chromosome, donor1.pathIndexes[currentVertice])){
+               currentVertice = donor2.GetPath()[currentVerticeOld];
+
+                    
+               if(_IsInPath(chromosome, currentVertice) || _IsInPath(chromosome, donor2.pathIndexes[currentVertice]))
+                {
+                    bool foundVertice = false;
+                    for (int j = 0; j < length; j++)
+                        {
+                            if(!_IsInPath(chromosome, j) && !_IsInPath(chromosome, donor1.pathIndexes[j]))
+                            {
+                                chromosome.pathIndexes[currentVerticeOld] = j;
+                                currentVerticeOld = j;
+                                foundVertice = true;
+                            }
+                        
+                        }
+                    if (foundVertice == false)
+                    {
+                        for (int j = 0; j < length; j++)
+                        {
+                            if (!_IsInPath(chromosome, j) && !_IsInPath(chromosome, donor2.pathIndexes[j]))
+                            {
+                                chromosome.pathIndexes[currentVerticeOld] = j;
+                                currentVerticeOld = j;
+                                //foundVertice = true;
+                            }
+                        }
+                    }
+
+                }
+               
+                chromosome.pathIndexes[currentVerticeOld] = currentVertice;
+                currentVerticeOld = currentVertice;
+            }
+            
+            chromosome.pathIndexes[currentVerticeOld] = currentVertice;
+            currentVerticeOld = currentVertice;
+
+
+        }*/
+        //FUCK UP
+        /*Chromosome chromosome = new Chromosome(length);
         int currentVertice = 0;
         CurrentDonor currentDonor = CurrentDonor.FIRST;
+
+        
 
         for (int i = 0; i < length; i++)
         {
@@ -33,7 +156,7 @@ public class Chromosome : WUGraphPath
                 while (count <= length)
                 {
 
-                    if (_IsInPath(chromosome, this.AtIndex(currentVertice), i))
+                    if (_IsInPath(chromosome, this.AtIndex(currentVertice)))
                     {
                         currentDonor = CurrentDonor.SECOND;
                     }
@@ -42,7 +165,7 @@ public class Chromosome : WUGraphPath
                         break;
                     }
 
-                    if (_IsInPath(chromosome, that.AtIndex(currentVertice), i))
+                    if (_IsInPath(chromosome, that.AtIndex(currentVertice)))
                     {
                         currentDonor = CurrentDonor.FIRST;
                         currentVertice = _GetNextVerticeIndex(currentVertice, this);
@@ -65,7 +188,7 @@ public class Chromosome : WUGraphPath
                 while (count <= length)
                 {
 
-                    if (_IsInPath(chromosome, that.AtIndex(currentVertice), i))
+                    if (_IsInPath(chromosome, that.AtIndex(currentVertice)))
                     {
                         currentDonor = CurrentDonor.FIRST;
                     }
@@ -75,7 +198,7 @@ public class Chromosome : WUGraphPath
                         break;
                     }
 
-                    if (_IsInPath(chromosome, this.AtIndex(currentVertice), i))
+                    if (_IsInPath(chromosome, this.AtIndex(currentVertice)))
                     {
                         currentDonor = CurrentDonor.SECOND;
                         currentVertice = _GetNextVerticeIndex(currentVertice, that);
@@ -89,7 +212,7 @@ public class Chromosome : WUGraphPath
                     count++;
                 }
             }
-        }
+        }*/
 
         return chromosome;
     }
@@ -107,9 +230,9 @@ public class Chromosome : WUGraphPath
         return path.AtIndex(0);
     }
 
-    private bool _IsInPath(WUGraphPath path, int what, int before)
+    private bool _IsInPath(WUGraphPath path, int what)
     {
-        for(int i = 0; i < before; i++)
+        for(int i = 0; i < length; i++)
         {
             if (path.AtIndex(i) == what)
             {
@@ -182,7 +305,7 @@ class Generation
     private int size;
     private Individual[] generation;
     private WUGraph graph;
-    private Random random;
+    private ThreadSafeRandom random;
 
     private double crossingOverProbablity;
     private double mutationProbability; 
@@ -193,7 +316,7 @@ class Generation
         size = 0;
         generation = new Individual[capacity];
         this.graph = graph;
-        random = new Random();
+        random = new ThreadSafeRandom();
 
         crossingOverProbablity = 0.8;
         mutationProbability = 0.1;
@@ -247,28 +370,34 @@ class Generation
         //newGeneration = this;
 
         //MessageBox.Show(_IsRoom().ToString());
-
-        for (int i = 0; i < capacity - 1 && newGeneration._IsRoom(); )
+        int operation = random.Next(0, 100);
+        for (int i = 0; i < capacity- capacity*0.15 - 1 && newGeneration._IsRoom(); )
         {
-            int operation = random.Next(100);
 
-            if(operation <= mutationProbability)
+            operation = random.Next(0, 100);
+
+            if(operation <= mutationProbability * 100)
             {
+                //MessageBox.Show("Mutation!");
                 newGeneration._IndividualAdd(this.generation[i].GetChromosome().Mutate());
                 i++;
-                break;
+                continue;
             }
-            if(operation <= crossingOverProbablity)
+            operation = random.Next(0, 100);
+            //operation = random.Next(100);
+            if (operation <= crossingOverProbablity * 100)
             {
+                //MessageBox.Show("CrossingOver!");
                 newGeneration._IndividualAdd(this.generation[i].GetChromosome().Crossingover(this.generation[i + 1].GetChromosome()));
                 newGeneration._IndividualAdd(this.generation[i + 1].GetChromosome().Crossingover(this.generation[i].GetChromosome()));
                 i += 2;
-                break;
+                continue;
             }
         }
 
         for (int i = 0; i < capacity && newGeneration._IsRoom(); i++)
         {
+            //MessageBox.Show("Here comes the elite!");
             newGeneration._IndividualAdd(this.generation[i].GetChromosome());
         }
 
@@ -340,14 +469,56 @@ class Individual
 public static class Randomizer
 {
     static Random r;
+    static int previous;
 
-    static Randomizer()
+    static public void Initialize()
     {
         r = new Random();
+        previous = 666;
     }
+
     static public int  GetNext(int from, int to)
     {
-        return r.Next(from, to);
+
+       
+        int next = r.Next(from, to);
+
+        if (next == previous && previous == 0)
+        {
+            //MessageBox.Show("Wierd things happening!");
+            r = new Random(Environment.TickCount/3);
+            next = r.Next(from, to);
+        }
+
+        previous = next;
+        return next;
+    }
+}
+public class ThreadSafeRandom
+{
+    private static readonly Random _global = new Random();
+    [ThreadStatic]
+    private static Random _local;
+
+    public ThreadSafeRandom()
+    {
+        if (_local == null)
+        {
+            int seed;
+            lock (_global)
+            {
+                seed = _global.Next();
+            }
+            _local = new Random(seed);
+        }
+    }
+    public int Next()
+    {
+        return _local.Next();
+    }
+    public int Next(int from, int to)
+    {
+        return _local.Next(from, to);
     }
 }
 
@@ -355,6 +526,7 @@ public class WUGraph
 {
     List<WUGraphVertice> vertices;
     List<WUGraphEdge> edges;
+    ThreadSafeRandom random;
     
 
     class ExperimentSequence
@@ -375,6 +547,8 @@ public class WUGraph
     {
         vertices = new List<WUGraphVertice>();
         edges = new List<WUGraphEdge>();
+        Randomizer.Initialize();
+        random = new ThreadSafeRandom();
     }
 
     public void Clear()
@@ -577,6 +751,11 @@ public class WUGraph
         edges.Add(new WUGraphEdge(GetVerticeIndex(vertice1.GetName()), GetVerticeIndex(vertice2.GetName()), weight));
     }
 
+    public void EdgeAdd(WUGraphEdge edge)
+    {
+        edges.Add(edge);
+    }
+
     public WUGraphEdge EdgeAt(int where)
     {
         return edges.ElementAt(where);
@@ -695,6 +874,11 @@ public class WUGraph
         return -1;
     }
 
+    public string GetVerticeName(int index)
+    {
+        return vertices.ElementAt(index).GetName();
+    }
+
     public int GetVerticesNumber()
     {
         return vertices.Count;
@@ -725,7 +909,7 @@ public class WUGraph
 
         for (int i = 0; i < size; i++)
         {
-            vertices.Add(new WUGraphVertice(Randomizer.GetNext(0, 1000), Randomizer.GetNext(0, 500), i.ToString()));
+            vertices.Add(new WUGraphVertice(random.Next(0,1000),random.Next(0, 500), i.ToString()));
         }
 
         for (int i = 0; i < size; i++)
@@ -766,10 +950,43 @@ public class WUGraph
 
     public WUGraphPath MCE(int threadsNumber, int repitations)
     {
-        /*if (MCESequence != null)
+        /*MCESequencRepetitions = repitations;
+
+        MCESequence = new ExperimentSequence[threadsNumber];
+        for (int i = 0; i < threadsNumber; i++)
         {
-            Array.Clear(MCESequence, 0, MCESequence.Length);
-        }*/
+            MCESequence[i] = new ExperimentSequence();
+            MCESequence[i].path = new WUGraphPath(vertices.Count);
+        }
+
+        Thread[] threads = new Thread[threadsNumber];
+
+        for (int i = 0; i < threadsNumber; i++)
+        {
+            threads[i] = new Thread(new ParameterizedThreadStart(MCESingle));
+            threads[i].Start(i);
+        }
+
+        for (int i = 0; i < threadsNumber; i++)
+        {
+            threads[i].Join();
+        }
+
+        //MessageBox.Show("<" + GASequence[0].pathWeight.ToString() + " " + GASequence[1].pathWeight.ToString() + " " + GASequence[2].pathWeight.ToString() + ">");
+
+        int minWeight = MCESequence[0].pathWeight;
+        int minPathIndex = 0;
+        for (int i = 1; i < threadsNumber; i++)
+        {
+            if (MCESequence[i].pathWeight < minWeight && MCESequence[i].pathWeight >= 0)
+            {
+                minWeight = MCESequence[i].pathWeight;
+                minPathIndex = i;
+            }
+        }
+
+        return MCESequence[minPathIndex].path;*/
+        
         MCESequence = new ExperimentSequence[threadsNumber];
         for (int i = 0; i < threadsNumber; i++)
         {
@@ -805,6 +1022,7 @@ public class WUGraph
         //WUGraphPath result = new WUGraphPath(vertices.Count);
         //result.CopyPath(MCESequence[minPathIndex].path);
         return MCESequence[minPathIndex].path;
+        
     }
 
     private void MCESingle(object n) //MCE routine
@@ -873,13 +1091,15 @@ public class WUGraphEdge
 
 public class WUGraphPath
 {
-    protected int[] pathIndexes;
+    public int[] pathIndexes;
     protected int length;
+    ThreadSafeRandom random;
 
     public WUGraphPath(int pathLength)
     {
         length = pathLength;
         pathIndexes = new int[length];
+        random = new ThreadSafeRandom();
     }
 
     ~WUGraphPath()
@@ -916,17 +1136,37 @@ public class WUGraphPath
     {
         List<int> list = new List<int>();
 
-        for (int i = 0; i < length; i++)
+        int currentVertice = 0;
+
+        for (int j = 0; j < length; j++)
         {
-            list.Add(i);
+            if (j != 0)
+            {
+                list.Add(j);
+            }
+            pathIndexes[j] = -1;
         }
 
-        for (int i = 0; i < length; i++)
+        int i = 0;
+        for(i = 0;  list.Count > 0; i++)
         {
-            int d = Randomizer.GetNext(0, list.Count);
-            pathIndexes[i] = list.ElementAt(d);
-            list.RemoveAt(d);
+            int d = random.Next(0, list.Count);
+            if (random.Next() % 2 == 0 && /*pathIndexes[currentVertice] == -1 &&*/ currentVertice != list.ElementAt(d))
+            {
+                pathIndexes[currentVertice] = list.ElementAt(d);
+                currentVertice = list.ElementAt(d);
+                list.RemoveAt(d);
+            }
         }
+        for (int j = 0; j < length; j++)
+        {
+            if(pathIndexes[j] == -1)
+            {
+                pathIndexes[j] = 0;
+            }
+        }
+        
+
     }
 
     public void GenerateRandomPathFrom(int from)
