@@ -14,7 +14,6 @@ namespace TSP
 {
     enum Mode { REAL_MAP, RANDOM };
     
-
     public partial class MainForm : Form
     {
         public Graphics canvas;
@@ -23,8 +22,6 @@ namespace TSP
         Mode mode;
         Bitmap map;
         int count;
-        bool computeAverage;
-        int experiments;
         bool enteringFromTable;
         string fname;
         int fileIndex;
@@ -38,30 +35,38 @@ namespace TSP
         private void Form1_Load(object sender, EventArgs e)
         {
             canvas = this.CreateGraphics();
-            graph = new WUGraph();
-            bitmapCanvas = new Bitmap(this.Width, this.Height - 225);
+            
+            bitmapCanvas = new Bitmap(this.Width, this.Height);
             canvasPictureBox.Image = bitmapCanvas;
             mode = Mode.RANDOM;
             count = 0;
             buttonRandomMode.Text = "*Random";
-            computeAverage = false;
             enteringFromTable = false;
             fileIndex = 0;
+            graph = null;
         }
 
         private void _TableFill()
         {
-            for (int i = 0; i < graph.GetEdgesNumber(); i++)
+            dataGridView1.Rows.Clear();
+
+            int rowIndex = 0;
+            for (int i = 0; i < graph.GetVerticesNumber(); i++)
             {
-                dataGridView1.Rows.Add();   
-                dataGridView1.Rows[i].Cells[0].Value = graph.GetVerticeName(graph.EdgeAt(i).GetVertice1Index());
-                dataGridView1.Rows[i].Cells[1].Value = graph.GetVerticeName(graph.EdgeAt(i).GetVertice2Index());
-                dataGridView1.Rows[i].Cells[2].Value = graph.EdgeAt(i).GetWeight();
+                for (int j = 0; j < graph.GetVerticesNumber(); j++)
+                {
+                    dataGridView1.Rows.Add();
+                    dataGridView1.Rows[rowIndex].Cells[0].Value = graph.GetVerticeName(i);
+                    dataGridView1.Rows[rowIndex].Cells[1].Value = graph.GetVerticeName(j);
+                    dataGridView1.Rows[rowIndex].Cells[2].Value = graph.EdgeWeight(i, j).ToString();
+                    rowIndex++;
+                }
             }
         }
 
         private void drawButton_Click(object sender, EventArgs e)
         {
+            graph = new WUGraph(Convert.ToInt32(verticesNumTextBox.Text));
             graph.GenerateRandom(Convert.ToInt16(verticesNumTextBox.Lines[0]));
             
             graph.Draw(bitmapCanvas, canvasPictureBox);
@@ -70,9 +75,6 @@ namespace TSP
             dataGridView1.Refresh();
             _TableFill();
             dataGridView1.Update();
-            buttonGARun.Enabled = true;
-            drawPathButton.Enabled = true;
-            mCBEbutton.Enabled = true;
         }
 
         private void drawPathButton_Click(object sender, EventArgs e)
@@ -95,15 +97,12 @@ namespace TSP
 
         private void mCBEbutton_Click(object sender, EventArgs e)
         {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-
-               
-      
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             if (mode == Mode.RANDOM)
             {
                     pathWeightTextBox.Text = (graph.DrawPath(graph.MCE(Convert.ToInt32(threadsTextBox.Text),
-                                             Convert.ToInt32(experimentsTextBox.Text)), bitmapCanvas, canvasPictureBox).ToString());
+                                             Convert.ToInt64(experimentsTextBox.Text)), bitmapCanvas, canvasPictureBox).ToString());
 
             }
             else
@@ -115,18 +114,14 @@ namespace TSP
             stopwatch.Stop();
 
             textBoxTime.Text = stopwatch.ElapsedMilliseconds.ToString();
-
-
         }
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
-            graph.ClearEdges();
-
             for(int i = 0; i < dataGridView1.Rows.Count-1; i++)
             {
-                graph.EdgeAdd(graph.GetVerticeByName(dataGridView1.Rows[i].Cells[0].Value.ToString()),
-                              graph.GetVerticeByName(dataGridView1.Rows[i].Cells[1].Value.ToString()),
+                graph.EdgeAdd(graph.GetVerticeIndex(dataGridView1.Rows[i].Cells[0].Value.ToString()),
+                              graph.GetVerticeIndex(dataGridView1.Rows[i].Cells[1].Value.ToString()),
                               Convert.ToInt16(dataGridView1.Rows[i].Cells[2].Value));
             }
         }
@@ -145,8 +140,13 @@ namespace TSP
         {
             if (mode == Mode.REAL_MAP)
             {
+                
                 if (enteringFromTable == false)
                 {
+                    if (graph == null)
+                    {
+                        graph = new WUGraph(0);
+                    }
         
                     Bitmap bitmap = new Bitmap(canvasPictureBox.Image);
                     Graphics canvas0 = Graphics.FromImage(bitmap);
@@ -157,59 +157,42 @@ namespace TSP
                     System.Drawing.SolidBrush brush = new SolidBrush(Color.Blue);
                     canvas0.DrawString(count.ToString(), font, brush, e.X + 10, e.Y - 10);
 
-                    graph.VerticeAdd(new WUGraphVertice(e.X, e.Y, count.ToString()));
-                    dataGridView1.Rows.Add(count, count, 0);
-                    count++;
+                    graph.VerticeAdd(e.X, e.Y, textBoxNewVertice.Text);
 
-                    dataGridView1.Update();
+                    count++;
                 }
                 else
                 {
-
-                   
-
-                        Bitmap bitmap = new Bitmap(canvasPictureBox.Image);
-                        Graphics canvas0 = Graphics.FromImage(bitmap);
-                        canvasPictureBox.Image = bitmap;
-                        canvas0.FillEllipse(Brushes.Red, e.X - 5, e.Y - 5, 10, 10);
-
-                        //Font font = new Font("Arial", 12);
-                        System.Drawing.SolidBrush brush = new SolidBrush(Color.Blue);
-                        //canvas0.DrawString(count.ToString(), font, brush, e.X + 10, e.Y - 10);
-                    
+                    Bitmap bitmap = new Bitmap(canvasPictureBox.Image);
+                    Graphics canvas0 = Graphics.FromImage(bitmap);
+                    canvasPictureBox.Image = bitmap;
+                    canvas0.FillEllipse(Brushes.Red, e.X - 5, e.Y - 5, 10, 10);
+                    System.Drawing.SolidBrush brush = new SolidBrush(Color.Blue);
 
                     int buffer;
-                    //for (i = 0; i < table.Count() && ; i++)
-                    //{
                     if (fileIndex+1 < table.Count() && !int.TryParse(table[fileIndex+1], out buffer)) { 
-                        graph.VerticeAdd(new WUGraphVertice(e.X, e.Y, table[fileIndex]));
+                        graph.VerticeAdd(e.X, e.Y, table[fileIndex]);
                         dataGridView1.Rows.Add(table[fileIndex], table[fileIndex], 0);
                         fileIndex++;
                         dataGridView1.Update();
-                        }
+                    }
                     else {
                         fileIndex++;
 
                         for (int j = 0; j < graph.GetVerticesNumber()  && fileIndex  < table.Count(); j++)
                         {
-                            
-                            //fileIndex++;
                             for (int k = j + 1; k < graph.GetVerticesNumber(); k++)
                             {
-                                //MessageBox.Show(table[fileIndex].ToString());
                                 WUGraphEdge edge = new WUGraphEdge(j, k, Convert.ToInt32(table[fileIndex]));
-                                graph.EdgeAdd(edge);
+                                graph.EdgeAdd(j, k, Convert.ToInt32(table[fileIndex]));
                                 WUGraphEdge edge2 = new WUGraphEdge(k, j, Convert.ToInt32(table[fileIndex]));
-                                graph.EdgeAdd(edge2);
+                                graph.EdgeAdd(k, j, Convert.ToInt32(table[fileIndex]));
                                 fileIndex++;
                             }
                             fileIndex++;
                         }
-                        
-                       
                     }
-                    dataGridView1.Update();
-                    
+                    dataGridView1.Update(); 
                 }
             }
         }
@@ -253,9 +236,9 @@ namespace TSP
 
             if (mode == Mode.RANDOM)
             {
-                pathWeightTextBox.Text = (graph.DrawPath(graph.GA(Convert.ToInt16(textBoxGAThredsNum.Text),
-                                                                  Convert.ToInt16(textBoxGenerationCap.Text),
-                                                                  Convert.ToInt16(textBoxIterations.Text)),
+                pathWeightTextBox.Text = (graph.DrawPath(graph.GA(Convert.ToInt32(textBoxGAThredsNum.Text),
+                                                                  Convert.ToInt32(textBoxGenerationCap.Text),
+                                                                  Convert.ToInt64(textBoxIterations.Text)),
                                                                   bitmapCanvas,
                                                                   canvasPictureBox).ToString());
             }
@@ -279,28 +262,6 @@ namespace TSP
             dataGridView1.Update();
         }
 
-        private void buttonEAW_Click(object sender, EventArgs e)
-        {
-            textBoxEAW.Text = graph.GetEAW().ToString();
-        }
-
-        private void buttonAverageEnable_Click(object sender, EventArgs e)
-        {
-            experiments = Convert.ToInt32(textBoxAverage.Text);
-
-            if(computeAverage == true)
-            {
-                computeAverage = false;
-                buttonAverageEnable.Text = "Average";
-            }
-            else
-            {
-                computeAverage = true;
-                buttonAverageEnable.Text = "*Average";
-            }
-            
-        }
-
         private void buttonLoadTable_Click(object sender, EventArgs e)
         {
             OpenFileDialog d;
@@ -317,11 +278,6 @@ namespace TSP
             _TableFill();
             dataGridView1.Update();
             enteringFromTable = false;
-        }
-
-        private void textBoxGenerationCap_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -354,5 +310,37 @@ namespace TSP
             MessageBox.Show(path1s + "+" + path2s + "=" +paths);
             pathWeightTextBox.Text = (graph.DrawPath(path, bitmapCanvas, canvasPictureBox).ToString());
         }
+
+        private void buttonSaveGraph_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog d = new SaveFileDialog();
+            d.ShowDialog();
+            graph.SafeToFile(d.FileName);
+        }
+
+        private void buttonLoadFromFile_Click(object sender, EventArgs e)
+        {
+            graph = new WUGraph(0);
+            OpenFileDialog d = new OpenFileDialog();
+            d.ShowDialog();
+            graph.ReadFromFile(d.FileName);
+
+            if (mode == Mode.RANDOM) {
+                graph.Draw(bitmapCanvas, canvasPictureBox);
+            }
+            else
+            {
+                graph.DrawOnMap(canvas, new Bitmap(map), canvasPictureBox);
+            }
+            _TableFill();
+        }
+
+        private void buttonSymmetry_Click(object sender, EventArgs e)
+        {
+            graph.Symmetry();
+            _TableFill();
+            dataGridView1.Update();
+        }
+
     }
 }

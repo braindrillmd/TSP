@@ -10,7 +10,7 @@ enum CurrentDonor { FIRST, SECOND };
 
 public class Chromosome : WUGraphPath
 {
-    int pathWeight;
+    //int pathWeight;
 
     public Chromosome(int length) : base(length){ }
 
@@ -18,8 +18,6 @@ public class Chromosome : WUGraphPath
 
     public Chromosome Crossingover(Chromosome that)
     {
-        int currentVertice = 0;
-        int currentVerticeOld= 0;
         Chromosome chromosome = new Chromosome(length);
         for (int i = 0; i < length; i++)
         {
@@ -72,147 +70,6 @@ public class Chromosome : WUGraphPath
                 pathIndexes[j] = 0;
             }
         }
-
-
-        /*for (int i = 0; i < length; i++)
-        {
-            if (i == length-1)
-            {
-                chromosome.pathIndexes[currentVerticeOld] = 0;
-                break;
-            }
-            WUGraphPath donor1 = new WUGraphPath(length);
-            WUGraphPath donor2 = new WUGraphPath(length);
-
-            if (i % 2 == 0)
-            {
-                
-                donor1 = this;
-                donor2 = that;
-            }
-            else
-            {
-                donor2 = this;
-                donor1 = that;
-            }
-            currentVertice = donor1.GetPath()[currentVerticeOld];
-
-            if(_IsInPath(chromosome, currentVertice) || _IsInPath(chromosome, donor1.pathIndexes[currentVertice])){
-               currentVertice = donor2.GetPath()[currentVerticeOld];
-
-                    
-               if(_IsInPath(chromosome, currentVertice) || _IsInPath(chromosome, donor2.pathIndexes[currentVertice]))
-                {
-                    bool foundVertice = false;
-                    for (int j = 0; j < length; j++)
-                        {
-                            if(!_IsInPath(chromosome, j) && !_IsInPath(chromosome, donor1.pathIndexes[j]))
-                            {
-                                chromosome.pathIndexes[currentVerticeOld] = j;
-                                currentVerticeOld = j;
-                                foundVertice = true;
-                            }
-                        
-                        }
-                    if (foundVertice == false)
-                    {
-                        for (int j = 0; j < length; j++)
-                        {
-                            if (!_IsInPath(chromosome, j) && !_IsInPath(chromosome, donor2.pathIndexes[j]))
-                            {
-                                chromosome.pathIndexes[currentVerticeOld] = j;
-                                currentVerticeOld = j;
-                                //foundVertice = true;
-                            }
-                        }
-                    }
-
-                }
-               
-                chromosome.pathIndexes[currentVerticeOld] = currentVertice;
-                currentVerticeOld = currentVertice;
-            }
-            
-            chromosome.pathIndexes[currentVerticeOld] = currentVertice;
-            currentVerticeOld = currentVertice;
-
-
-        }*/
-        //FUCK UP
-        /*Chromosome chromosome = new Chromosome(length);
-        int currentVertice = 0;
-        CurrentDonor currentDonor = CurrentDonor.FIRST;
-
-        
-
-        for (int i = 0; i < length; i++)
-        {
-            if (i % 2 == 0)
-            {
-                currentDonor = CurrentDonor.FIRST;
-
-                int count = 0;
-
-                while (count <= length)
-                {
-
-                    if (_IsInPath(chromosome, this.AtIndex(currentVertice)))
-                    {
-                        currentDonor = CurrentDonor.SECOND;
-                    }
-                    else {                    
-                        currentVertice = chromosome.pathIndexes[i] = this.AtIndex(currentVertice);
-                        break;
-                    }
-
-                    if (_IsInPath(chromosome, that.AtIndex(currentVertice)))
-                    {
-                        currentDonor = CurrentDonor.FIRST;
-                        currentVertice = _GetNextVerticeIndex(currentVertice, this);
-                    }
-                    else
-                    {
-                        currentVertice = chromosome.pathIndexes[i] = that.AtIndex(currentVertice);
-                        break;
-                    }
-
-                    count++;
-                }
-            }
-            else
-            {
-                currentDonor = CurrentDonor.SECOND;
-
-                int count = 0;
-
-                while (count <= length)
-                {
-
-                    if (_IsInPath(chromosome, that.AtIndex(currentVertice)))
-                    {
-                        currentDonor = CurrentDonor.FIRST;
-                    }
-                    else
-                    {
-                        currentVertice = chromosome.pathIndexes[i] = that.AtIndex(currentVertice);
-                        break;
-                    }
-
-                    if (_IsInPath(chromosome, this.AtIndex(currentVertice)))
-                    {
-                        currentDonor = CurrentDonor.SECOND;
-                        currentVertice = _GetNextVerticeIndex(currentVertice, that);
-                    }
-                    else
-                    {
-                        currentVertice = chromosome.pathIndexes[i] = this.AtIndex(currentVertice);
-                        break;
-                    }
-
-                    count++;
-                }
-            }
-        }*/
 
         return chromosome;
     }
@@ -367,9 +224,7 @@ class Generation
     public void NextGeneration()
     {
         Generation newGeneration = new Generation(capacity, graph);
-        //newGeneration = this;
 
-        //MessageBox.Show(_IsRoom().ToString());
         int operation = random.Next(0, 100);
         for (int i = 0; i < capacity- capacity*0.15 - 1 && newGeneration._IsRoom(); )
         {
@@ -378,16 +233,13 @@ class Generation
 
             if(operation <= mutationProbability * 100)
             {
-                //MessageBox.Show("Mutation!");
                 newGeneration._IndividualAdd(this.generation[i].GetChromosome().Mutate());
                 i++;
                 continue;
             }
             operation = random.Next(0, 100);
-            //operation = random.Next(100);
             if (operation <= crossingOverProbablity * 100)
             {
-                //MessageBox.Show("CrossingOver!");
                 newGeneration._IndividualAdd(this.generation[i].GetChromosome().Crossingover(this.generation[i + 1].GetChromosome()));
                 newGeneration._IndividualAdd(this.generation[i + 1].GetChromosome().Crossingover(this.generation[i].GetChromosome()));
                 i += 2;
@@ -397,7 +249,6 @@ class Generation
 
         for (int i = 0; i < capacity && newGeneration._IsRoom(); i++)
         {
-            //MessageBox.Show("Here comes the elite!");
             newGeneration._IndividualAdd(this.generation[i].GetChromosome());
         }
 
@@ -408,16 +259,12 @@ class Generation
             this.generation[i].GetChromosome().CopyPath(newGeneration.generation[i].GetChromosome());
             this.generation[i].SetWeight(newGeneration.generation[i].GetWeight());
         }
-
-        //return newGeneration;
     }
 
     void _SortGeneration()
     {
         Comparer comparer = new Comparer();
         Array.Sort(generation, comparer);
-
-        //MessageBox.Show(generation[0].GetWeight().ToString() + " " + generation[1].GetWeight().ToString() + " " + generation[2].GetWeight().ToString());
     }
 
 }//class Generation
@@ -485,7 +332,6 @@ public static class Randomizer
 
         if (next == previous && previous == 0)
         {
-            //MessageBox.Show("Wierd things happening!");
             r = new Random(Environment.TickCount/3);
             next = r.Next(from, to);
         }
@@ -494,6 +340,7 @@ public static class Randomizer
         return next;
     }
 }
+
 public class ThreadSafeRandom
 {
     private static readonly Random _global = new Random();
@@ -524,8 +371,9 @@ public class ThreadSafeRandom
 
 public class WUGraph
 {
-    List<WUGraphVertice> vertices;
-    List<WUGraphEdge> edges;
+    string[] vertices;
+    int[,] edges;
+    Point[] coordinates;
     ThreadSafeRandom random;
     
 
@@ -535,32 +383,22 @@ public class WUGraph
         public int pathWeight;
     }
 
-    int GASequenceRepetitions;
-    int MCESequencRepetitions;
+    long GASequenceRepetitions;
+    long MCESequencRepetitions;
 
     int GACapacity;
 
     ExperimentSequence[] MCESequence;
     ExperimentSequence[] GASequence;
 
-    public WUGraph()
+    public WUGraph(int verticesNumber)
     {
-        vertices = new List<WUGraphVertice>();
-        edges = new List<WUGraphEdge>();
-        Randomizer.Initialize();
+        vertices = new string[verticesNumber];
+        edges = new int[verticesNumber, verticesNumber];
+        coordinates = new Point[verticesNumber];
         random = new ThreadSafeRandom();
     }
 
-    public void Clear()
-    {
-        edges.Clear();
-        vertices.Clear();
-    }
-
-    public void ClearEdges()
-    {
-        edges.Clear();
-    }
 
     public void Draw(Graphics canvas)
     {
@@ -572,26 +410,59 @@ public class WUGraph
         int y1 = 0;
         int y2 = 0;
 
-        for (int i = 0; i < edges.Count; i++)
+        for (int i = 0; i < vertices.Count(); i++)
         {
-            x1 = vertices.ElementAt(edges.ElementAt(i).GetVertice1Index()).GetX();
-            y1 = vertices.ElementAt(edges.ElementAt(i).GetVertice1Index()).GetY();
-            x2 = vertices.ElementAt(edges.ElementAt(i).GetVertice2Index()).GetX();
-            y2 = vertices.ElementAt(edges.ElementAt(i).GetVertice2Index()).GetY();
+            for (int j = 0; j < vertices.Count(); j++)
+            {
+                x1 = coordinates[i].X;
+                y1 = coordinates[i].Y;
+                x2 = coordinates[j].X;
+                y2 = coordinates[j].Y;
 
-            canvas.DrawLine(Pens.Black, new Point(x1, y1), new Point(x2, y2));
+                canvas.DrawLine(Pens.Black, new Point(x1, y1), new Point(x2, y2));
+            }
         }
 
-
-
-
-        for (int i = 0; i < vertices.Count; i++)
+        for (int i = 0; i < vertices.Count(); i++)
         {
-            int x = vertices.ElementAt(i).GetX();
-            int y = vertices.ElementAt(i).GetY();
+            int x = coordinates[i].X;
+            int y = coordinates[i].Y;
 
             canvas.FillEllipse(Brushes.Red, x - 5, y - 5, 10, 10);
         }
+    }
+
+    public void DrawOnMap(Graphics canvas, Bitmap map, PictureBox output)
+    {
+        int x1 = 0;
+        int x2 = 0;
+        int y1 = 0;
+        int y2 = 0;
+
+        canvas = Graphics.FromImage(map);
+
+        for (int i = 0; i < vertices.Count(); i++)
+        {
+            for (int j = 0; j < vertices.Count(); j++)
+            {
+                x1 = coordinates[i].X;
+                y1 = coordinates[i].Y;
+                x2 = coordinates[j].X;
+                y2 = coordinates[j].Y;
+
+                canvas.DrawLine(Pens.Black, new Point(x1, y1), new Point(x2, y2));
+            }
+        }
+
+        for (int i = 0; i < vertices.Count(); i++)
+        {
+            int x = coordinates[i].X;
+            int y = coordinates[i].Y;
+
+            canvas.FillEllipse(Brushes.Red, x - 5, y - 5, 10, 10);
+        }
+
+        output.Image = map;
     }
 
     //Previous function wrap
@@ -611,7 +482,6 @@ public class WUGraph
         int y1 = 0;
         int x2 = 0;
         int y2 = 0;
-        int pathWeight = 0;
         int i = 0;
 
         int penWidth = 2;
@@ -623,12 +493,11 @@ public class WUGraph
         Pen pen = new Pen(Color.Red, penWidth);
         pen.CustomEndCap = cap;
 
-        //THE SPOT
         canvas.Clear(SystemColors.Control);
 
 
-        int x = vertices.ElementAt(path.GetPath()[0]).GetX();
-        int y = vertices.ElementAt(path.GetPath()[0]).GetY();
+        int x = coordinates[path.GetPath()[0]].X;
+        int y = coordinates[path.GetPath()[0]].Y;
         canvas.FillEllipse(Brushes.Black, x - 5, y - 5, 10, 10);
         canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);
 
@@ -636,38 +505,22 @@ public class WUGraph
         {
 
 
-            x1 = vertices.ElementAt(path.GetPath()[i]).GetX();
-            y1 = vertices.ElementAt(path.GetPath()[i]).GetY();
-            x2 = vertices.ElementAt(path.GetPath()[i + 1]).GetX();
-            y2 = vertices.ElementAt(path.GetPath()[i + 1]).GetY();
+            x1 = coordinates[path.GetPath()[i]].X;
+            y1 = coordinates[path.GetPath()[i]].Y;
+            x2 = coordinates[path.GetPath()[i + 1]].X;
+            y2 = coordinates[path.GetPath()[i + 1]].Y;
 
             canvas.FillEllipse(Brushes.Black, x2 - 5, y2 - 5, 10, 10);
             canvas.DrawString(path.AtIndex(i + 1).ToString(), font, brush, x2 + 10, y2 - 10);
 
             canvas.DrawLine(pen, x1, y1, x2, y2);
-            if (FindEdge(path.GetPath()[i], path.GetPath()[i + 1]) == null)
-            {
-                return -1;
-            }
-            else
-            {
-                pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i + 1]).GetWeight();
-            }
 
         }
 
         canvas.DrawLine(pen, x2, y2, x, y);
-        if (FindEdge(path.GetPath()[i], path.GetPath()[0]) == null)
-        {
-            return -1;
-        }
-        else
-        {
-            pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[0]).GetWeight();
-        }
 
 
-        return pathWeight;
+        return PathWeight(path);
     }
 
     //DrawPath Wrap
@@ -680,7 +533,6 @@ public class WUGraph
         return pathWeight;
     }
 
-    //This one much like Draw function
     //TODO: use one instead of two
     public int DrawPathOnMap(WUGraphPath path, Graphics canvas, Bitmap map, PictureBox output)
     {
@@ -688,7 +540,6 @@ public class WUGraph
         int y1 = 0;
         int x2 = 0;
         int y2 = 0;
-        int pathWeight = 0;
         int i = 0;
 
         int penWidth = 2;
@@ -703,79 +554,46 @@ public class WUGraph
         canvas.Clear(SystemColors.Control);
         canvas = Graphics.FromImage(map);
 
-        int x = vertices.ElementAt(path.GetPath()[0]).GetX();
-        int y = vertices.ElementAt(path.GetPath()[0]).GetY();
+        int x = coordinates[path.GetPath()[0]].X;
+        int y = coordinates[path.GetPath()[0]].Y;
         canvas.FillEllipse(Brushes.Black, x - 5, y - 5, 10, 10);
         canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);
 
         for (i = 0; i < path.GetLength() - 1; i++)
         {
-            x1 = vertices.ElementAt(path.GetPath()[i]).GetX();
-            y1 = vertices.ElementAt(path.GetPath()[i]).GetY();
-            x2 = vertices.ElementAt(path.GetPath()[i + 1]).GetX();
-            y2 = vertices.ElementAt(path.GetPath()[i + 1]).GetY();
+            x1 = coordinates[path.GetPath()[i]].X;
+            y1 = coordinates[path.GetPath()[i]].Y;
+            x2 = coordinates[path.GetPath()[i + 1]].X;
+            y2 = coordinates[path.GetPath()[i + 1]].Y;
 
             canvas.FillEllipse(Brushes.Black, x2 - 5, y2 - 5, 10, 10);
             canvas.DrawString(path.AtIndex(i + 1).ToString(), font, brush, x2 + 10, y2 - 10);
 
             canvas.DrawLine(pen, x1, y1, x2, y2);
-            if (FindEdge(path.GetPath()[i], path.GetPath()[i + 1]) == null)
-            {
-                output.Image = map;
-                return -1;
-            }
-            else
-            {
-                pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i + 1]).GetWeight();
-            }
         }
 
         canvas.DrawLine(pen, x2, y2, x, y);
-        if (FindEdge(path.GetPath()[i], path.GetPath()[0]) == null)
-        {
-            output.Image = map;
-            return -1;
-        }
-        else
-        {
-            pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[0]).GetWeight();
-        }
 
         output.Image = map;
 
-        return pathWeight;
+
+        return PathWeight(path);
     }
 
-    public void EdgeAdd(WUGraphVertice vertice1, WUGraphVertice vertice2, int weight)
+    public void EdgeAdd(int vertice1Index, int vertice2Index, int weight)
     {
-        edges.Add(new WUGraphEdge(GetVerticeIndex(vertice1.GetName()), GetVerticeIndex(vertice2.GetName()), weight));
+        edges[vertice1Index, vertice2Index] = weight;
     }
-
-    public void EdgeAdd(WUGraphEdge edge)
+    public int IndexOfVertice(string name)
     {
-        edges.Add(edge);
+        return Array.IndexOf(vertices, name);
     }
-
-    public WUGraphEdge EdgeAt(int where)
+    public int EdgeWeight(int x, int y)
     {
-        return edges.ElementAt(where);
+        return edges[x, y];
     }
 
-
-    public WUGraphEdge FindEdge(int edgeIndex1, int edgeIndex2)
-    {
-        for (int i = 0; i < edges.Count; i++)
-        {
-            if (edges.ElementAt(i).GetVertice1Index() == edgeIndex1 && edges.ElementAt(i).GetVertice2Index() == edgeIndex2)
-            {
-                return edges.ElementAt(i);
-            }
-        }
-
-        return null;
-    }
-
-    public WUGraphPath GA(int threadsNum, int generationCap, int iterations)
+    public WUGraphPath GA(int threadsNum, int generationCap, long iterations)
     {
         GASequenceRepetitions = iterations;
         GACapacity = generationCap;
@@ -783,7 +601,7 @@ public class WUGraph
         for (int i = 0; i < threadsNum; i++)
         {
             GASequence[i] = new ExperimentSequence();
-            GASequence[i].path = new WUGraphPath(vertices.Count);
+            GASequence[i].path = new WUGraphPath(vertices.Count());
         }
 
         Thread[] threads = new Thread[threadsNum];
@@ -798,8 +616,6 @@ public class WUGraph
         {
             threads[i].Join();
         }
-
-        //MessageBox.Show("<" + GASequence[0].pathWeight.ToString() + " " + GASequence[1].pathWeight.ToString() + " " + GASequence[2].pathWeight.ToString() + ">");
 
         int minWeight = GASequence[0].pathWeight;
         int minPathIndex = 0;
@@ -823,175 +639,79 @@ public class WUGraph
         for (int i = 1; i < GASequenceRepetitions; i++)
         {
             generation.NextGeneration();
-            //MessageBox.Show(n.ToString() + "/" + i.ToString() + ": " + PathWeight(generation.GetBest()).ToString());
         }
 
         GASequence[(int)n].path.CopyPath(generation.GetBest());
         GASequence[(int)n].pathWeight = PathWeight(generation.GetBest());
     }
 
-    public int GetEAW()
-    {
-        EdgeComparer comparer = new EdgeComparer();
-
-        edges.Sort(comparer);
-
-        List<WUGraphEdge> temp = new List<WUGraphEdge>(edges);
-
-        int result = (temp.ElementAt(0).GetWeight() + temp.ElementAt(edges.Count - 1).GetWeight()) / 2 * vertices.Count();
-
-        return result;
-    }
-
-    public int GetEdgesNumber()
-    {
-        return edges.Count;
-    }
-
-    public WUGraphVertice GetVerticeByName(string name)
-    {
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            if (vertices.ElementAt(i).GetName() == name)
-            {
-                return vertices.ElementAt(i);
-            }
-        }
-
-        return null;
-    }
-
     public int GetVerticeIndex(string name)
-    {
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            if (name == vertices.ElementAt(i).GetName())
-            {
-                return i;
-            }
-        }
-
-        return -1;
+    { 
+        return Array.IndexOf(vertices, name);
     }
 
     public string GetVerticeName(int index)
     {
-        return vertices.ElementAt(index).GetName();
+        return vertices[index];
     }
 
     public int GetVerticesNumber()
     {
-        return vertices.Count;
+        return vertices.Count();
     }
 
     public void GenerateEdges()
     {
-        edges.Clear();
+        edges = new int[vertices.Count(), vertices.Count()];
 
-        for (int i = 0; i < vertices.Count; i++)
+        for (int i = 0; i < vertices.Count(); i++)
         {
-            for (int j = 0; j < vertices.Count; j++)
+            for (int j = 0; j < vertices.Count(); j++)
             {
-                int xI = vertices.ElementAt(i).GetX();
-                int xJ = vertices.ElementAt(j).GetX();
-                int yI = vertices.ElementAt(i).GetY();
-                int yJ = vertices.ElementAt(j).GetY();
+                int xI = coordinates[i].X;
+                int xJ = coordinates[j].X;
+                int yI = coordinates[i].Y;
+                int yJ = coordinates[j].Y;
 
-                edges.Add(new WUGraphEdge(i, j, (int)Math.Round(Math.Sqrt((xI - xJ) * (xI - xJ) + (yI - yJ) * (yI - yJ)))));
+                edges[i,j] = (int)Math.Round(Math.Sqrt((xI - xJ) * (xI - xJ) + (yI - yJ) * (yI - yJ)));
             }
         }
     }
 
     public void GenerateRandom(int size)
     {
-        vertices.Clear();
-        edges.Clear();
 
         for (int i = 0; i < size; i++)
         {
-            vertices.Add(new WUGraphVertice(random.Next(0,1000),random.Next(0, 500), i.ToString()));
+            vertices[i] = i.ToString();
+            coordinates[i].X = random.Next(0, 1000);
+            coordinates[i].Y = random.Next(0, 500);
         }
 
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
             {
-                int xI = vertices.ElementAt(i).GetX();
-                int xJ = vertices.ElementAt(j).GetX();
-                int yI = vertices.ElementAt(i).GetY();
-                int yJ = vertices.ElementAt(j).GetY();
+                int xI = coordinates[i].X;
+                int xJ = coordinates[j].X;
+                int yI = coordinates[i].Y;
+                int yJ = coordinates[j].Y;
 
-                edges.Add(new WUGraphEdge(i, j, (int)Math.Round(Math.Sqrt((xI - xJ) * (xI - xJ) + (yI - yJ) * (yI - yJ)))));
+                edges[i, j] = (int)Math.Round(Math.Sqrt((xI - xJ) * (xI - xJ) + (yI - yJ) * (yI - yJ)));
             }
         }
-    }
-
-    public int PathWeight(WUGraphPath path)
-    {
-        int pathWeight = 0;
-        int i;
-
-        for (i = 0; i < path.GetLength() - 1; i++)
-        {
-            if (FindEdge(path.GetPath()[i], path.GetPath()[i + 1]) != null)
-            {
-                pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[i + 1]).GetWeight();
-            }
-            else
-            {
-                return int.MaxValue;
-            }
-        }
-
-        pathWeight += FindEdge(path.GetPath()[i], path.GetPath()[0]).GetWeight();
-
-        return pathWeight;
-    }
-
-    public WUGraphPath MCE(int threadsNumber, int repitations)
-    {
-        /*MCESequencRepetitions = repitations;
-
-        MCESequence = new ExperimentSequence[threadsNumber];
-        for (int i = 0; i < threadsNumber; i++)
-        {
-            MCESequence[i] = new ExperimentSequence();
-            MCESequence[i].path = new WUGraphPath(vertices.Count);
-        }
-
-        Thread[] threads = new Thread[threadsNumber];
-
-        for (int i = 0; i < threadsNumber; i++)
-        {
-            threads[i] = new Thread(new ParameterizedThreadStart(MCESingle));
-            threads[i].Start(i);
-        }
-
-        for (int i = 0; i < threadsNumber; i++)
-        {
-            threads[i].Join();
-        }
-
-        //MessageBox.Show("<" + GASequence[0].pathWeight.ToString() + " " + GASequence[1].pathWeight.ToString() + " " + GASequence[2].pathWeight.ToString() + ">");
-
-        int minWeight = MCESequence[0].pathWeight;
-        int minPathIndex = 0;
-        for (int i = 1; i < threadsNumber; i++)
-        {
-            if (MCESequence[i].pathWeight < minWeight && MCESequence[i].pathWeight >= 0)
-            {
-                minWeight = MCESequence[i].pathWeight;
-                minPathIndex = i;
-            }
-        }
-
-        return MCESequence[minPathIndex].path;*/
         
+    }
+
+    
+
+    public WUGraphPath MCE(int threadsNumber, long repitations)
+    {  
         MCESequence = new ExperimentSequence[threadsNumber];
         for (int i = 0; i < threadsNumber; i++)
         {
             MCESequence[i] = new ExperimentSequence();
-            MCESequence[i].path = new WUGraphPath(vertices.Count);
+            MCESequence[i].path = new WUGraphPath(vertices.Count());
         }
         Thread[] threads = new Thread[threadsNumber];
         MCESequencRepetitions = repitations;
@@ -1006,7 +726,6 @@ public class WUGraph
         {
             threads[i].Join();
         }
-        //Array.Clear(threads, 0, threadsNumber);
 
         int minWeight = MCESequence[0].pathWeight;
         int minPathIndex = 0;
@@ -1019,15 +738,13 @@ public class WUGraph
             }
         }
 
-        //WUGraphPath result = new WUGraphPath(vertices.Count);
-        //result.CopyPath(MCESequence[minPathIndex].path);
         return MCESequence[minPathIndex].path;
         
     }
 
     private void MCESingle(object n) //MCE routine
     {
-        WUGraphPath minPath = new WUGraphPath(vertices.Count);
+        WUGraphPath minPath = new WUGraphPath(vertices.Count());
         minPath.GenerateRandomPath();
         int minPathWeight = PathWeight(minPath);
         MCESequence[(int)n].path.CopyPath(minPath);
@@ -1035,8 +752,10 @@ public class WUGraph
 
         for (int i = 0; i < MCESequencRepetitions; i++)
         {
-            WUGraphPath currentPath = new WUGraphPath(vertices.Count);
+            WUGraphPath currentPath = new WUGraphPath(vertices.Count());
             currentPath.GenerateRandomPath();
+            //DEBUG
+            //currentPath.PutToFile("log" + n.ToString());
             int currentPathWeight = PathWeight(currentPath);
 
             if (minPathWeight > currentPathWeight)
@@ -1048,9 +767,112 @@ public class WUGraph
         }
     }
 
-    public void VerticeAdd(WUGraphVertice vertice)
+    public int PathWeight(WUGraphPath path)
     {
-        vertices.Add(vertice);
+        int pathWeight = 0;
+        int i;
+
+        for (i = 0; i < path.GetLength() - 1; i++)
+        {
+
+            pathWeight += edges[path.GetPath()[i], path.GetPath()[i + 1]];
+        }
+
+        pathWeight += edges[path.GetPath()[i], path.GetPath()[0]];
+
+        return pathWeight;
+    }
+
+    public void SafeToFile(string filePath)
+    {
+        System.IO.StreamWriter file = new System.IO.StreamWriter(filePath);
+
+        string buffer = "";
+
+        file.WriteLine(vertices.Count());
+
+        for(int i = 0; i < vertices.Count(); i++)
+        {
+            buffer = vertices[i] + " " + coordinates[i].X + " " + coordinates[i].Y + " ";
+            file.WriteLine(buffer);
+        }
+
+        for(int i = 0; i < vertices.Count(); i++)
+        {
+            buffer = "";
+            for (int j = 0; j < vertices.Count(); j++)
+            {
+                buffer += edges[i, j].ToString() + " ";
+            }
+            file.WriteLine(buffer);
+        }
+
+        file.Close();
+    }
+
+    public void Symmetry()
+    {
+        for(int i = 0; i < vertices.Count(); i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                edges[i, j] = edges[j, i];
+            }
+        }
+    }
+
+    public void ReadFromFile(string filePath)
+    {
+        System.IO.StreamReader file = new System.IO.StreamReader(filePath);
+
+        string buffer = "";
+        string[] arrayBuffer;
+
+        int verticesNumber = Convert.ToInt32(file.ReadLine());
+
+        vertices = new string[verticesNumber];
+        edges = new int[verticesNumber, verticesNumber];
+        coordinates = new Point[verticesNumber];
+
+        for(int i = 0; i < verticesNumber; i++)
+        {
+            buffer = file.ReadLine();
+            arrayBuffer = buffer.Split(' ');
+
+            vertices[i] = arrayBuffer[0];
+            coordinates[i].X = Convert.ToInt32(arrayBuffer[1]);
+            coordinates[i].Y = Convert.ToInt32(arrayBuffer[2]);
+        }
+
+        for (int i = 0; i < verticesNumber; i++)
+        {
+            buffer = file.ReadLine();
+            arrayBuffer = buffer.Split(' ');
+
+            for(int j = 0; j < verticesNumber; j++)
+            {
+                edges[i, j] = Convert.ToInt32(arrayBuffer[j]);
+            }
+        }
+    }
+
+    public void VerticeAdd(int x, int y, string name)
+    {
+        string[] newVerticesArray = new string[vertices.Count()+1];
+        Point[] newCoordinatesArray = new Point[vertices.Count()+1];
+
+        for (int i = 0; i < vertices.Count(); i++)
+        {
+            newVerticesArray[i] = vertices[i];
+            newCoordinatesArray[i].X = coordinates[i].X;
+            newCoordinatesArray[i].Y = coordinates[i].Y;
+        }
+        newVerticesArray[vertices.Count()] = name;
+        newCoordinatesArray[vertices.Count()].X = x;
+        newCoordinatesArray[vertices.Count()].Y = y;
+
+        vertices = newVerticesArray;
+        coordinates = newCoordinatesArray;
     }
 }
 
@@ -1151,7 +973,7 @@ public class WUGraphPath
         for(i = 0;  list.Count > 0; i++)
         {
             int d = random.Next(0, list.Count);
-            if (random.Next() % 2 == 0 && /*pathIndexes[currentVertice] == -1 &&*/ currentVertice != list.ElementAt(d))
+            if (random.Next() % 2 == 0 && currentVertice != list.ElementAt(d))
             {
                 pathIndexes[currentVertice] = list.ElementAt(d);
                 currentVertice = list.ElementAt(d);
@@ -1165,8 +987,6 @@ public class WUGraphPath
                 pathIndexes[j] = 0;
             }
         }
-        
-
     }
 
     public void GenerateRandomPathFrom(int from)
@@ -1187,6 +1007,27 @@ public class WUGraphPath
             pathIndexes[i] = list.ElementAt(d);
             list.RemoveAt(d);
         }
+    }
+    
+    public void PutToFile(string filePath)
+    {
+        System.IO.StreamWriter file = new System.IO.StreamWriter(filePath, true);
+
+        string output = "{";
+
+        for(int i = 0; i < length; i++)
+        {
+            output += "(" + i.ToString() + "," + pathIndexes[i] + ")";
+            if(i != length - 1)
+            {
+                output += ", ";
+            }
+        }
+
+        output += "}";
+
+        file.WriteLine(output);
+        file.Close();
     }  
 }
 
