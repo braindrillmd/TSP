@@ -244,9 +244,9 @@ namespace TSP
             }
             else
             {
-                pathWeightTextBox.Text = (graph.DrawPathOnMap(graph.GA(Convert.ToInt16(textBoxGAThredsNum.Text),
-                                                                  Convert.ToInt16(textBoxGenerationCap.Text),
-                                                                  Convert.ToInt16(textBoxIterations.Text)),
+                pathWeightTextBox.Text = (graph.DrawPathOnMap(graph.GA(Convert.ToInt32(textBoxGAThredsNum.Text),
+                                                                  Convert.ToInt32(textBoxGenerationCap.Text),
+                                                                  Convert.ToInt64(textBoxIterations.Text)),
                                                                   canvas, new Bitmap(map), canvasPictureBox).ToString());
             }
 
@@ -301,6 +301,7 @@ namespace TSP
             
             Chromosome path = new Chromosome(Convert.ToInt32(verticesNumTextBox.Text));
             path = path1.Crossingover(path2);
+            //path.Mutate();
             string paths = "";
             for (int i = 0; i < Convert.ToInt32(verticesNumTextBox.Text); i++)
             {

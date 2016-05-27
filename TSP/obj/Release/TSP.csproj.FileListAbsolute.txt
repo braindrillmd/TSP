@@ -1,0 +1,9 @@
+D:\Home\Valery\GitHub\TSP\TSP\bin\Release\TSP.exe.config
+D:\Home\Valery\GitHub\TSP\TSP\bin\Release\TSP.exe
+D:\Home\Valery\GitHub\TSP\TSP\bin\Release\TSP.pdb
+D:\Home\Valery\GitHub\TSP\TSP\obj\Release\TSP.csprojResolveAssemblyReference.cache
+D:\Home\Valery\GitHub\TSP\TSP\obj\Release\TSP.MainForm.resources
+D:\Home\Valery\GitHub\TSP\TSP\obj\Release\TSP.Properties.Resources.resources
+D:\Home\Valery\GitHub\TSP\TSP\obj\Release\TSP.csproj.GenerateResource.Cache
+D:\Home\Valery\GitHub\TSP\TSP\obj\Release\TSP.exe
+D:\Home\Valery\GitHub\TSP\TSP\obj\Release\TSP.pdb

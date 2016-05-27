@@ -55,7 +55,7 @@ public class Chromosome : WUGraphPath
                 {
                     for(int j = 0; j < length; j++)
                     {
-                        if (!_IsInPath(chromosome, j))
+                        if (!_IsInPath(chromosome, j) && j != i)
                         {
                             chromosome.pathIndexes[i] = j;
                         }
@@ -107,18 +107,18 @@ public class Chromosome : WUGraphPath
 
         if (length < 5)
         {
-            return chromosome;
+            return this;
         }
         else
         {
-            Random r = new Random();
+            ThreadSafeRandom r = new ThreadSafeRandom();
 
-            int mutatingGeneIndex = r.Next(length - 2) + 1;
+            int mutatingGeneIndex = r.Next(0, length - 2) + 1;
 
-            int insertionIndex = r.Next(length - 2) + 1;
+            int insertionIndex = r.Next(0, length - 2) + 1;
             while (insertionIndex <= mutatingGeneIndex + 1 && insertionIndex >= mutatingGeneIndex - 1)
             {
-                insertionIndex = r.Next(length - 2) + 1;
+                insertionIndex = r.Next(0, length - 2) + 1;
             }
 
             int geneBeforeMutatedIndex = 0;
@@ -252,13 +252,37 @@ class Generation
             newGeneration._IndividualAdd(this.generation[i].GetChromosome());
         }
 
-        newGeneration._SortGeneration();
+        
 
         for(int i = 0; i < capacity; i++)
         {
             this.generation[i].GetChromosome().CopyPath(newGeneration.generation[i].GetChromosome());
             this.generation[i].SetWeight(newGeneration.generation[i].GetWeight());
         }
+
+        newGeneration._SortGeneration();
+    }
+
+    public void PutToFile(string filePath)
+    {
+        System.IO.StreamWriter file = new System.IO.StreamWriter(filePath, true);
+
+        
+
+        for (int i = 0; i < capacity; i++)
+        {
+            string output = "";
+
+            for (int j = 0; j < generation[j].GetChromosome().GetLength(); j++)
+            {
+                output += j.ToString() + "-" + generation[i].GetChromosome().pathIndexes[j] + " ";
+            }
+            file.WriteLine(output);
+        }
+
+
+        
+        file.Close();
     }
 
     void _SortGeneration()
@@ -343,29 +367,29 @@ public static class Randomizer
 
 public class ThreadSafeRandom
 {
-    private static readonly Random _global = new Random();
+    private static readonly Meisui.Random.MersenneTwister _global = new Meisui.Random.MersenneTwister();
     [ThreadStatic]
-    private static Random _local;
+    private static Meisui.Random.MersenneTwister _local;
 
     public ThreadSafeRandom()
     {
         if (_local == null)
         {
-            int seed;
+            //int seed;
             lock (_global)
             {
-                seed = _global.Next();
+                //seed = (int)_global.genrand_int32();
             }
-            _local = new Random(seed);
+            _local = new Meisui.Random.MersenneTwister();
         }
     }
     public int Next()
     {
-        return _local.Next();
+        return Math.Abs((int)_local.genrand_Int32());
     }
     public int Next(int from, int to)
     {
-        return _local.Next(from, to);
+        return  Math.Abs((int)_local.genrand_Int32()) % to;
     }
 }
 
@@ -639,6 +663,7 @@ public class WUGraph
         for (int i = 1; i < GASequenceRepetitions; i++)
         {
             generation.NextGeneration();
+            //generation.PutToFile("ga_gen" + i.ToString() + "thread" + n.ToString() + ".log");
         }
 
         GASequence[(int)n].path.CopyPath(generation.GetBest());
@@ -748,6 +773,8 @@ public class WUGraph
         minPath.GenerateRandomPath();
         int minPathWeight = PathWeight(minPath);
         MCESequence[(int)n].path.CopyPath(minPath);
+        //MCESequence[(int)n].pathWeight = minPathWeight;
+        MCESequence[(int)n].path = minPath;
         MCESequence[(int)n].pathWeight = minPathWeight;
 
         for (int i = 0; i < MCESequencRepetitions; i++)
@@ -755,30 +782,31 @@ public class WUGraph
             WUGraphPath currentPath = new WUGraphPath(vertices.Count());
             currentPath.GenerateRandomPath();
             //DEBUG
-            //currentPath.PutToFile("log" + n.ToString());
+            //currentPath.PutToFile("mce_thread" + n.ToString()+ ".log");
             int currentPathWeight = PathWeight(currentPath);
 
             if (minPathWeight > currentPathWeight)
             {
                 MCESequence[(int)n].path.CopyPath(currentPath);
+                //MCESequence[(int)n].path = currentPath;
                 MCESequence[(int)n].pathWeight = currentPathWeight;
                 minPathWeight = currentPathWeight;
             }
         }
     }
 
-    public int PathWeight(WUGraphPath path)
+    public int 
+    PathWeight(WUGraphPath path)
     {
         int pathWeight = 0;
         int i;
 
-        for (i = 0; i < path.GetLength() - 1; i++)
+        for (i = 0; i < path.GetLength(); i++)
         {
-
-            pathWeight += edges[path.GetPath()[i], path.GetPath()[i + 1]];
+            pathWeight += edges[i, path.pathIndexes[i]];
         }
 
-        pathWeight += edges[path.GetPath()[i], path.GetPath()[0]];
+        //pathWeight += edges[path.GetPath()[i], path.GetPath()[0]];
 
         return pathWeight;
     }
@@ -958,6 +986,8 @@ public class WUGraphPath
     {
         List<int> list = new List<int>();
 
+        //ThreadSafeRandom random = new ThreadSafeRandom();
+
         int currentVertice = 0;
 
         for (int j = 0; j < length; j++)
@@ -972,7 +1002,7 @@ public class WUGraphPath
         int i = 0;
         for(i = 0;  list.Count > 0; i++)
         {
-            int d = random.Next(0, list.Count);
+            int d = random.Next(1, list.Count);////////////////////////////////////////
             if (random.Next() % 2 == 0 && currentVertice != list.ElementAt(d))
             {
                 pathIndexes[currentVertice] = list.ElementAt(d);
