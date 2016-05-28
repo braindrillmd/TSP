@@ -11,8 +11,12 @@ enum CurrentDonor { FIRST, SECOND };
 public class Chromosome : WUGraphPath
 {
     //int pathWeight;
+    ThreadSafeRandom random;
 
-    public Chromosome(int length) : base(length){ }
+    public Chromosome(int length) : base(length)
+    {
+        random = new ThreadSafeRandom();
+    }
 
     
 
@@ -41,21 +45,27 @@ public class Chromosome : WUGraphPath
                 donor1 = that;
             }
 
-            if (!_IsInPath(chromosome, donor1.pathIndexes[i]) && donor1.pathIndexes[i] != 0)
+            if (!_IsInPath(chromosome, donor1.pathIndexes[i]) &&
+                donor1.pathIndexes[i] != 0 && 
+                !_WouldBeCycle(chromosome, i, donor1.pathIndexes[i]))
             {
                 chromosome.pathIndexes[i] = donor1.pathIndexes[i];
             }
             else
             {
-                if(!_IsInPath(chromosome, donor2.pathIndexes[i]) && donor2.pathIndexes[i] != 0)
+                if(!_IsInPath(chromosome, donor2.pathIndexes[i]) &&
+                    donor2.pathIndexes[i] != 0 &&
+                    !_WouldBeCycle(chromosome, i, donor2.pathIndexes[i]))
                 {
                     chromosome.pathIndexes[i] = donor2.pathIndexes[i] ;
                 }
                 else
                 {
-                    for(int j = 0; j < length; j++)
+                    for(int j = 1; j < length; j++)
                     {
-                        if (!_IsInPath(chromosome, j) && j != i)
+                        if (!_IsInPath(chromosome, j) &&
+                            j != i &&
+                            !_WouldBeCycle(chromosome, i, j))
                         {
                             chromosome.pathIndexes[i] = j;
                         }
@@ -63,15 +73,42 @@ public class Chromosome : WUGraphPath
                 }
             }
         }
-        for (int j = 0; j < length; j++)
+        for (int i = 0; i < length; i++)
         {
-            if (pathIndexes[j] == -1)
+            if(chromosome.pathIndexes[i] == -1)
             {
-                pathIndexes[j] = 0;
+                chromosome.pathIndexes[i] = 0;
             }
         }
+            /*for (int i = 0; i < length; i++)
+            {
+                int oldVertice = 0;
+                int currentVertice = 0;
+                int j;
 
-        return chromosome;
+                for (j = 0; j < length && chromosome.pathIndexes[currentVertice] != -1; j++)
+                {
+                    oldVertice = currentVertice;
+                    currentVertice = chromosome.pathIndexes[currentVertice];
+                }
+
+                int r = random.Next(1, length);
+
+                if(j < length - 1)
+                {
+                    while(_IsInPath(chromosome, r) || r == currentVertice)
+                    {
+                        r = random.Next(1, length);
+                    }
+                    chromosome.pathIndexes[currentVertice] = r;
+                }
+                else
+                {
+                    chromosome.pathIndexes[currentVertice] = 0;
+                }
+            }*/
+
+            return chromosome;
     }
 
     private int _GetNextVerticeIndex(int vertice, WUGraphPath path)
@@ -137,6 +174,33 @@ public class Chromosome : WUGraphPath
         }
 
         return chromosome;
+    }
+
+    private bool _WouldBeCycle(WUGraphPath where, int whereToAdd, int whatToAdd)
+    {
+        WUGraphPath tempPath = new WUGraphPath(where.GetLength());
+        tempPath.CopyPath(where);
+        tempPath.pathIndexes[whereToAdd] = whatToAdd;
+
+        for(int i = 0; i < tempPath.GetLength(); i++)
+        {
+            int currentVerticeIndex = i;
+
+            for(int j = 0; j < tempPath.GetLength(); j++)
+            {
+                if (currentVerticeIndex != -1) {
+                    currentVerticeIndex = tempPath.pathIndexes[currentVerticeIndex];
+                }
+            }
+
+            if(currentVerticeIndex != -1)
+            {
+            
+                return true;
+            }
+        }
+
+        return false;
     }
 }//class Chromosome
 
@@ -337,6 +401,106 @@ class Individual
     
 }//class Individual
 
+class Population
+{
+    private int capacity;
+    private Chromosome[] tours;
+    private const double mutationProbability = 0.25;
+    private WUGraph graph;
+    private ThreadSafeRandom random;
+
+    public Population(int capacity, int citiesNumber, WUGraph graph)
+    {
+        this.capacity = capacity;
+        tours = new Chromosome[capacity];
+        this.graph = graph;
+        random = new ThreadSafeRandom();
+
+        for(int i = 0; i < capacity; i++)
+        {
+            tours[i] = new Chromosome(citiesNumber);
+            tours[i].GenerateRandomPath();
+        }
+    }
+
+    public WUGraphPath GetMostFitting()
+    {
+        int mostFittingIndex = 0;
+        int mostFittingWeightValue = graph.PathWeight(tours[0]);
+
+        for (int i = 0; i < capacity; i++) { 
+            int currentTourWeightValue = graph.PathWeight(tours[i]);
+            if (graph.PathWeight(tours[i]) < mostFittingWeightValue)
+            {
+                mostFittingWeightValue = currentTourWeightValue;
+                mostFittingIndex = i;
+            }
+        }
+
+        return tours[mostFittingIndex];
+    }
+
+    public void NextStep()
+    {
+        int parent1Index = 0;
+        int parent2Index = 0;
+        int parent1WeightValue = graph.PathWeight(tours[0]);
+        int parent2WeightValue = graph.PathWeight(tours[0]); ;
+        int mostLongestTourIndex = 0;
+        int secondMostLongestTourIndex = 0;
+        int mostLongestTourWeightValue = graph.PathWeight(tours[0]); ;
+        int secondMostLongestTourWeightValue = graph.PathWeight(tours[0]);
+
+        for (int i = 0; i < capacity; i++)
+        {
+            int currentPathWeight = graph.PathWeight(tours[i]);
+
+            if (currentPathWeight < parent1WeightValue)
+            {
+                parent1WeightValue = currentPathWeight;
+                parent1Index = i;
+            }
+            else
+            {
+                if(currentPathWeight < parent2WeightValue)
+                {
+                    parent2WeightValue = currentPathWeight;
+                    parent2Index = i;
+                }
+            }
+
+            if(currentPathWeight > mostLongestTourWeightValue)
+            {
+                mostLongestTourWeightValue = currentPathWeight;
+                mostLongestTourIndex = i;
+            }
+            else
+            {
+                if(currentPathWeight > secondMostLongestTourWeightValue)
+                {
+                    secondMostLongestTourWeightValue = currentPathWeight;
+                    secondMostLongestTourIndex = i;
+                }
+            }
+        }
+
+        Chromosome child1 = tours[parent1Index].Crossingover(tours[parent2Index]);
+        Chromosome child2 = tours[parent2Index].Crossingover(tours[parent1Index]);
+
+        if(random.Next(0,10000) < mutationProbability * 100)
+        {
+            child1.Mutate();
+        }
+        if (random.Next(0, 10000) < mutationProbability * 100)
+        {
+            child2.Mutate();
+        }
+
+        tours[mostLongestTourIndex].CopyPath(child1);
+        tours[secondMostLongestTourIndex].CopyPath(child2);
+    }
+}//class Population
+
 public static class Randomizer
 {
     static Random r;
@@ -389,7 +553,7 @@ public class ThreadSafeRandom
     }
     public int Next(int from, int to)
     {
-        return  Math.Abs((int)_local.genrand_Int32()) % to;
+        return  Math.Abs(from + (int)_local.genrand_Int32()) % to;
     }
 }
 
@@ -520,28 +684,28 @@ public class WUGraph
         canvas.Clear(SystemColors.Control);
 
 
-        int x = coordinates[path.GetPath()[0]].X;
+        /*int x = coordinates[path.GetPath()[0]].X;
         int y = coordinates[path.GetPath()[0]].Y;
         canvas.FillEllipse(Brushes.Black, x - 5, y - 5, 10, 10);
-        canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);
+        canvas.DrawString((0).ToString(), font, brush, x + 10, y - 10);*/
 
-        for (i = 0; i < path.GetLength() - 1; i++)
+        for (i = 0; i < path.GetLength(); i++)
         {
 
 
-            x1 = coordinates[path.GetPath()[i]].X;
-            y1 = coordinates[path.GetPath()[i]].Y;
-            x2 = coordinates[path.GetPath()[i + 1]].X;
-            y2 = coordinates[path.GetPath()[i + 1]].Y;
+            x1 = coordinates[i].X;
+            y1 = coordinates[i].Y;
+            x2 = coordinates[path.GetPath()[i]].X;
+            y2 = coordinates[path.GetPath()[i]].Y;
 
             canvas.FillEllipse(Brushes.Black, x2 - 5, y2 - 5, 10, 10);
-            canvas.DrawString(path.AtIndex(i + 1).ToString(), font, brush, x2 + 10, y2 - 10);
+            canvas.DrawString((path.GetPath()[i]).ToString(), font, brush, x2 + 10, y2 - 10);
 
             canvas.DrawLine(pen, x1, y1, x2, y2);
 
         }
 
-        canvas.DrawLine(pen, x2, y2, x, y);
+        //canvas.DrawLine(pen, x2, y2, x, y);
 
 
         return PathWeight(path);
@@ -578,25 +742,25 @@ public class WUGraph
         canvas.Clear(SystemColors.Control);
         canvas = Graphics.FromImage(map);
 
-        int x = coordinates[path.GetPath()[0]].X;
+        /*int x = coordinates[path.GetPath()[0]].X;
         int y = coordinates[path.GetPath()[0]].Y;
         canvas.FillEllipse(Brushes.Black, x - 5, y - 5, 10, 10);
-        canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);
+        canvas.DrawString(path.AtIndex(0).ToString(), font, brush, x + 10, y - 10);*/
 
-        for (i = 0; i < path.GetLength() - 1; i++)
+        for (i = 0; i < path.GetLength(); i++)
         {
-            x1 = coordinates[path.GetPath()[i]].X;
-            y1 = coordinates[path.GetPath()[i]].Y;
-            x2 = coordinates[path.GetPath()[i + 1]].X;
-            y2 = coordinates[path.GetPath()[i + 1]].Y;
+            x1 = coordinates[i].X;
+            y1 = coordinates[i].Y;
+            x2 = coordinates[path.GetPath()[i]].X;
+            y2 = coordinates[path.GetPath()[i]].Y;
 
             canvas.FillEllipse(Brushes.Black, x2 - 5, y2 - 5, 10, 10);
-            canvas.DrawString(path.AtIndex(i + 1).ToString(), font, brush, x2 + 10, y2 - 10);
+            canvas.DrawString((path.GetPath()[i]).ToString(), font, brush, x2 + 10, y2 - 10);
 
             canvas.DrawLine(pen, x1, y1, x2, y2);
         }
 
-        canvas.DrawLine(pen, x2, y2, x, y);
+        //canvas.DrawLine(pen, x2, y2, x, y);
 
         output.Image = map;
 
@@ -657,17 +821,15 @@ public class WUGraph
 
     private void _GARoutine(object n)
     {
-        Generation generation = new Generation(GACapacity, this);
-        generation.Initialize();
+        Population population = new Population(GACapacity, vertices.Count(), this);
 
         for (int i = 1; i < GASequenceRepetitions; i++)
         {
-            generation.NextGeneration();
-            //generation.PutToFile("ga_gen" + i.ToString() + "thread" + n.ToString() + ".log");
+            population.NextStep();
         }
 
-        GASequence[(int)n].path.CopyPath(generation.GetBest());
-        GASequence[(int)n].pathWeight = PathWeight(generation.GetBest());
+        GASequence[(int)n].path.CopyPath(population.GetMostFitting());
+        GASequence[(int)n].pathWeight = PathWeight(population.GetMostFitting());
     }
 
     public int GetVerticeIndex(string name)
