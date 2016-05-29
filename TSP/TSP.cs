@@ -300,7 +300,7 @@ namespace TSP
             }
             
             Chromosome path = new Chromosome(Convert.ToInt32(verticesNumTextBox.Text));
-            path = path1.Crossingover(path2);
+            path = path1.Crossingover(path2, graph);
             //path.Mutate();
             string paths = "";
             for (int i = 0; i < Convert.ToInt32(verticesNumTextBox.Text); i++)

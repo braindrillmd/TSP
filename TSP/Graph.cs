@@ -13,6 +13,7 @@ public class Chromosome : WUGraphPath
     //int pathWeight;
     ThreadSafeRandom random;
 
+
     public Chromosome(int length) : base(length)
     {
         random = new ThreadSafeRandom();
@@ -20,7 +21,7 @@ public class Chromosome : WUGraphPath
 
     
 
-    public Chromosome Crossingover(Chromosome that)
+    public Chromosome Crossingover(Chromosome that, WUGraph graph)
     {
         Chromosome chromosome = new Chromosome(length);
         for (int i = 0; i < length; i++)
@@ -61,18 +62,54 @@ public class Chromosome : WUGraphPath
                 }
                 else
                 {
-                    for(int j = 1; j < length; j++)
+                    //This worked. But this is not greedy enough, boy
+                    /*for(int j = 1; j < length; j++)
                     {
                         if (!_IsInPath(chromosome, j) &&
                             j != i &&
                             !_WouldBeCycle(chromosome, i, j))
                         {
+                           
                             chromosome.pathIndexes[i] = j;
                         }
-                    }
+                    }*/
                 }
             }
         }
+
+        //Greedyness!
+        for(int i = 1; i < length; i++)
+        {
+            if (!_IsInPath(chromosome, i))
+            {
+                List<KeyValuePair<int, int>> pairList = new List<KeyValuePair<int, int>>();
+                for (int j = 0; j < length; j++)
+                {
+  
+                    if (chromosome.pathIndexes[j] == -1 && j != i && !_WouldBeCycle(chromosome, j, i))
+                    {
+                        KeyValuePair<int, int> pair = new KeyValuePair<int, int>(graph.EdgeWeight(j, i), j);
+                        pairList.Add(pair);
+                    }
+                }
+                if (pairList.Count > 0)
+                {
+                    int min = pairList.ElementAt(0).Key;
+                    int minIndex = pairList.ElementAt(0).Value;
+                    for (int k = 0; k < pairList.Count; k++)
+                    {
+                        if (pairList.ElementAt(k).Key < min)
+                        {
+                            min = pairList.ElementAt(k).Key;
+                            minIndex = pairList.ElementAt(k).Value;
+                        }
+                    }
+                    chromosome.pathIndexes[minIndex] = i;
+                }
+      
+            }
+        }
+
         for (int i = 0; i < length; i++)
         {
             if(chromosome.pathIndexes[i] == -1)
@@ -304,8 +341,8 @@ class Generation
             operation = random.Next(0, 100);
             if (operation <= crossingOverProbablity * 100)
             {
-                newGeneration._IndividualAdd(this.generation[i].GetChromosome().Crossingover(this.generation[i + 1].GetChromosome()));
-                newGeneration._IndividualAdd(this.generation[i + 1].GetChromosome().Crossingover(this.generation[i].GetChromosome()));
+                newGeneration._IndividualAdd(this.generation[i].GetChromosome().Crossingover(this.generation[i + 1].GetChromosome(), graph));
+                newGeneration._IndividualAdd(this.generation[i + 1].GetChromosome().Crossingover(this.generation[i].GetChromosome(), graph));
                 i += 2;
                 continue;
             }
@@ -405,7 +442,7 @@ class Population
 {
     private int capacity;
     private Chromosome[] tours;
-    private const double mutationProbability = 0.25;
+    private const double mutationProbability = 50;
     private WUGraph graph;
     private ThreadSafeRandom random;
 
@@ -450,6 +487,7 @@ class Population
         int secondMostLongestTourIndex = 0;
         int mostLongestTourWeightValue = graph.PathWeight(tours[0]); ;
         int secondMostLongestTourWeightValue = graph.PathWeight(tours[0]);
+        const int DIV = 200;
 
         for (int i = 0; i < capacity; i++)
         {
@@ -459,45 +497,77 @@ class Population
             {
                 parent1WeightValue = currentPathWeight;
                 parent1Index = i;
-            }
-            else
-            {
-                if(currentPathWeight < parent2WeightValue)
-                {
-                    parent2WeightValue = currentPathWeight;
-                    parent2Index = i;
-                }
+
             }
 
-            if(currentPathWeight > mostLongestTourWeightValue)
+            if (currentPathWeight > parent1WeightValue && currentPathWeight < parent2WeightValue )
+            {
+                parent2WeightValue = currentPathWeight;
+                parent2Index = i;
+
+            }
+
+
+            if (currentPathWeight > mostLongestTourWeightValue)
             {
                 mostLongestTourWeightValue = currentPathWeight;
                 mostLongestTourIndex = i;
+
+
             }
-            else
+
+            if (currentPathWeight < mostLongestTourWeightValue && currentPathWeight > secondMostLongestTourWeightValue)
             {
-                if(currentPathWeight > secondMostLongestTourWeightValue)
-                {
-                    secondMostLongestTourWeightValue = currentPathWeight;
-                    secondMostLongestTourIndex = i;
-                }
+                secondMostLongestTourWeightValue = currentPathWeight;
+                secondMostLongestTourIndex = i;
+
             }
         }
 
-        Chromosome child1 = tours[parent1Index].Crossingover(tours[parent2Index]);
-        Chromosome child2 = tours[parent2Index].Crossingover(tours[parent1Index]);
+        Chromosome child1 = new Chromosome(tours[0].GetLength());
+            child1.CopyPath(tours[parent1Index].Crossingover(tours[parent2Index], graph));
+        Chromosome child2 = new Chromosome(tours[0].GetLength());
+        child2.CopyPath(tours[parent2Index].Crossingover(tours[parent1Index], graph));
 
-        if(random.Next(0,10000) < mutationProbability * 100)
+        /*MessageBox.Show("Parent 1: " + parent1Index.ToString() + "-" + parent1WeightValue.ToString() +
+            "\nParent 2: " + parent2Index.ToString() + "-" + parent2WeightValue.ToString() +
+            "\nLongest 1: " + mostLongestTourIndex.ToString() + "-" + mostLongestTourWeightValue.ToString() +
+            "\nLongest 2:" + secondMostLongestTourIndex.ToString() + "-" + secondMostLongestTourWeightValue.ToString());*/
+
+        if(random.Next(0,1000) < mutationProbability * 100)
         {
             child1.Mutate();
+            //MessageBox.Show("Mutated!");
+
         }
         if (random.Next(0, 10000) < mutationProbability * 100)
         {
             child2.Mutate();
+            //MessageBox.Show("Mutated!");
         }
 
         tours[mostLongestTourIndex].CopyPath(child1);
         tours[secondMostLongestTourIndex].CopyPath(child2);
+    }
+
+    public void PutToFile(string filePath, WUGraph graph)
+    {
+        System.IO.StreamWriter file = new System.IO.StreamWriter(filePath, true);
+
+        for (int i = 0; i < capacity; i++)
+        {
+            string output = "";
+
+            for (int j = 0; j < tours[j].GetLength(); j++)
+            {
+                output += j.ToString() + "-" +tours[i].pathIndexes[j] + " ";
+            }
+
+            output += "[" + graph.PathWeight(tours[i]) + "]";
+            file.WriteLine(output);
+        }
+
+        file.Close();
     }
 }//class Population
 
@@ -823,9 +893,12 @@ public class WUGraph
     {
         Population population = new Population(GACapacity, vertices.Count(), this);
 
-        for (int i = 1; i < GASequenceRepetitions; i++)
+        for (int i = 0; i < GASequenceRepetitions; i++)
         {
             population.NextStep();
+            
+            //Debug
+            //population.PutToFile("ga_t" + n.ToString() + "p" + i.ToString() + ".log", this);
         }
 
         GASequence[(int)n].path.CopyPath(population.GetMostFitting());
